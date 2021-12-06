@@ -6,7 +6,7 @@ namespace WoodenWorkshop.Core.Contacts.Services.Abstractions;
 
 public interface IContactsListService
 {
-    Task<IReadOnlyCollection<Contact>> GetContactsListAsync(ContactsFilter contactsFilter, Page page);
+    Task<IReadOnlyCollection<Contact>> GetContactsListAsync(Page page, ContactsFilter? contactsFilter = null);
 
     Task<Contact> AddContactAsync(Contact contact);
 

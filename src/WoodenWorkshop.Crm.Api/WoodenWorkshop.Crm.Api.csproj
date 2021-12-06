@@ -8,7 +8,15 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.0" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.0" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\WoodenWorkshop.Core.Contacts\WoodenWorkshop.Core.Contacts.csproj" />
+      <ProjectReference Include="..\WoodenWorkshop.Core\WoodenWorkshop.Core.csproj" />
     </ItemGroup>
 
 </Project>

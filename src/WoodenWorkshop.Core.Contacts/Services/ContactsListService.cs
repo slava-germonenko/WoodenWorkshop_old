@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
+using WoodenWorkshop.Common.Exceptions;
 using WoodenWorkshop.Common.Extensions;
 using WoodenWorkshop.Common.Models.Paging;
 using WoodenWorkshop.Core.Contacts.Models;
@@ -19,23 +20,37 @@ public class ContactsListService : IContactsListService
     }
 
 
-    public async Task<IReadOnlyCollection<Contact>> GetContactsListAsync(ContactsFilter contactsFilter, Page page)
+    public async Task<IReadOnlyCollection<Contact>> GetContactsListAsync(Page page, ContactsFilter? contactsFilter = null)
     {
-        return await _context.Contacts
-            .Include(c => c.Assignee)
-            .WhereNotNull(c => c.AssigneeId == contactsFilter.AssigneeId, contactsFilter.AssigneeId)
-            .WhereNotNull(c => c.FirstName == contactsFilter.FirstName, contactsFilter.FirstName)
-            .WhereNotNull(c => c.LastName == contactsFilter.LastName, contactsFilter.LastName)
-            .WhereNotNull(c => c.EmailAddress == contactsFilter.EmailAddress, contactsFilter.EmailAddress)
-            .AsNoTracking()
-            .ToListAsync();
+        var contactsQuery = _context.Contacts
+            .AsNoTracking();
+
+        if (contactsFilter is not null)
+        {
+            contactsQuery = contactsQuery
+                .WhereNotNull(c => c.AssigneeId == contactsFilter.AssigneeId, contactsFilter.AssigneeId)
+                .WhereNotNull(c => c.FirstName == contactsFilter.FirstName, contactsFilter.FirstName)
+                .WhereNotNull(c => c.LastName == contactsFilter.LastName, contactsFilter.LastName)
+                .WhereNotNull(c => c.EmailAddress == contactsFilter.EmailAddress, contactsFilter.EmailAddress);
+        }
+
+        return await contactsQuery.Include(c => c.Assignee).ToListAsync();
     }
 
     public async Task<Contact> AddContactAsync(Contact contact)
     {
+        var phoneNumberIsInUse = await _context.Contacts.AnyAsync(c => c.PhoneNumber == contact.PhoneNumber);
+        if (phoneNumberIsInUse)
+        {
+            throw new DuplicateException($"Контакт с номером телефона {contact.PhoneNumber} уже существует.");
+        }
+
+        contact.Updated = null;
         contact.Created = DateTime.UtcNow;
+
         await _context.AddAsync(contact);
         await _context.SaveChangesAsync();
+
         return contact;
     }
 
