@@ -19,4 +19,13 @@ public class Contact : BaseModel
     public string PhoneNumber { get; set; }
 
     public User? Assignee { get; set; }
+
+    public void CopyFrom(Contact source)
+    {
+        AssigneeId = source.AssigneeId;
+        FirstName = source.FirstName;
+        LastName = source.LastName;
+        EmailAddress = source.EmailAddress;
+        PhoneNumber = source.PhoneNumber;
+    }
 }

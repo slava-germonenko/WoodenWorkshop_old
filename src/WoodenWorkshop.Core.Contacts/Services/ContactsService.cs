@@ -1,5 +1,3 @@
-using Microsoft.EntityFrameworkCore;
-
 using WoodenWorkshop.Common.Exceptions;
 using WoodenWorkshop.Core.Contacts.Services.Abstractions;
 using WoodenWorkshop.Core.Models;
@@ -30,15 +28,16 @@ public class ContactsService : IContactsService
 
     public async Task<Contact> UpdateContactDetailsAsync(Contact contact)
     {
-        var contactExists = await _context.Contacts.AnyAsync(c => c.Id == contact.Id);
-        if (!contactExists)
+        var contactToUpdate = await _context.Contacts.FindAsync(contact.Id);
+        if (contactToUpdate is null)
         {
             throw new NotFoundException($"Контакт с идентификатором {contact.Id} не найден.");
         }
 
-        contact.Updated = DateTime.UtcNow;
-        _context.Contacts.Update(contact);
+        contactToUpdate.CopyFrom(contact);
+        _context.Contacts.Update(contactToUpdate);
         await _context.SaveChangesAsync();
-        return contact;
+
+        return contactToUpdate;
     }
 }

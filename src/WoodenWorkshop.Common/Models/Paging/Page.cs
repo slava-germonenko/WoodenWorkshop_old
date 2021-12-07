@@ -9,10 +9,8 @@ public record Page
     public const int DefaultSize = 50;
 
     [Range(0, int.MaxValue)]
-    public int Index { get; set; }
+    public int Index { get; set; } = DefaultIndex;
 
     [Range(1, int.MaxValue)]
-    public int Size { get; set; }
-
-    public static Page Default => new() {Index = DefaultIndex, Size = DefaultSize};
+    public int Size { get; set; } = DefaultSize;
 }

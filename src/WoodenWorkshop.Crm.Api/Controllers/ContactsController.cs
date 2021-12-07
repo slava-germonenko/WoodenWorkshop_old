@@ -35,14 +35,11 @@ public class ContactsController : ControllerBase
 
     [HttpGet("")]
     public async Task<ActionResult<IReadOnlyCollection<Contact>>> GetContactsListAsync(
-        [FromQuery] Page? page = null,
-        [FromQuery] ContactsFilter? contactsFilter = null
+        [FromQuery] Page page,
+        [FromQuery] ContactsFilter contactsFilter
     )
     {
-        var contacts = await _contactsListService.GetContactsListAsync(
-            page ?? Page.Default,
-            contactsFilter
-        );
+        var contacts = await _contactsListService.GetContactsListAsync(page, contactsFilter);
         return Ok(contacts);
     }
 
