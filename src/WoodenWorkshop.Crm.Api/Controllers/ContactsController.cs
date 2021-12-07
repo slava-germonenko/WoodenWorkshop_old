@@ -34,7 +34,7 @@ public class ContactsController : ControllerBase
     }
 
     [HttpGet("")]
-    public async Task<ActionResult<IReadOnlyCollection<Contact>>> GetContactsListAsync(
+    public async Task<ActionResult<PagedCollection<Contact>>> GetContactsListAsync(
         [FromQuery] Page page,
         [FromQuery] ContactsFilter contactsFilter
     )

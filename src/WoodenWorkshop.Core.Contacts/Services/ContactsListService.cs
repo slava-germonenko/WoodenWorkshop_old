@@ -20,7 +20,7 @@ public class ContactsListService : IContactsListService
     }
 
 
-    public async Task<IReadOnlyCollection<Contact>> GetContactsListAsync(Page page, ContactsFilter? contactsFilter = null)
+    public async Task<PagedCollection<Contact>> GetContactsListAsync(Page page, ContactsFilter? contactsFilter = null)
     {
         var contactsQuery = _context.Contacts
             .AsNoTracking();
@@ -34,7 +34,8 @@ public class ContactsListService : IContactsListService
                 .WhereNotNull(c => c.EmailAddress == contactsFilter.EmailAddress, contactsFilter.EmailAddress);
         }
 
-        return await contactsQuery.Include(c => c.Assignee).ToListAsync();
+        var contacts = await contactsQuery.Include(c => c.Assignee).ToListAsync();
+        return new(page, contacts);
     }
 
     public async Task<Contact> AddContactAsync(Contact contact)
