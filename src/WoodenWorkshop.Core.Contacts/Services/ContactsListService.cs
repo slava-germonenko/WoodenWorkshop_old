@@ -34,7 +34,7 @@ public class ContactsListService : IContactsListService
                 .WhereNotNull(c => c.EmailAddress == contactsFilter.EmailAddress, contactsFilter.EmailAddress);
         }
 
-        var contacts = await contactsQuery.Include(c => c.Assignee).ToListAsync();
+        var contacts = await contactsQuery.Include(c => c.Assignee).Page(page).ToListAsync();
         return new(page, contacts);
     }
 
