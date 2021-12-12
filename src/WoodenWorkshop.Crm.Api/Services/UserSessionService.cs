@@ -1,6 +1,8 @@
 using System.Text.Json;
+
 using Microsoft.Extensions.Options;
 using StackExchange.Redis;
+
 using WoodenWorkshop.Common.Exceptions;
 using WoodenWorkshop.Crm.Api.Models;
 using WoodenWorkshop.Crm.Api.Options;
@@ -29,7 +31,9 @@ public class UserSessionService : IUserSessionService
 
     public async Task<UserSession> GetUserSession(string refreshToken)
     {
-        var sessionRedisValue = await Redis.StringGetAsync(refreshToken);
+        var sessionRedisValue = await Redis.StringGetAsync(
+            GetRedisRefreshTokenKey(refreshToken)
+        );
         if (!sessionRedisValue.HasValue)
         {
             throw new NotFoundException($"Токен {refreshToken} уже не актуален либо не существует.");

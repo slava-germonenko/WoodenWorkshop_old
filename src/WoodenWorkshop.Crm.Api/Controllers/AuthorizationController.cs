@@ -99,7 +99,7 @@ public class AuthorizationController : ControllerBase
         await _userSessionService.ExpireUserSession(refreshTokenDto.RefreshToken);
         await _userSessionService.SaveUserSession(
             new(
-                newAccessToken.Token,
+                newRefreshToken.Token,
                 user.Id,
                 session.IpAddress,
                 session.DeviceName
