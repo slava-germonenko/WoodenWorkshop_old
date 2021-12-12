@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using StackExchange.Redis;
 
 using WoodenWorkshop.Core;
 using WoodenWorkshop.Core.Contacts.Services;
@@ -17,11 +18,13 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.Configure<Infrastructure>(builder.Configuration.GetSection("Infrastructure"));
+builder.Services.Configure<Security>(builder.Configuration.GetSection("Security"));
 
 builder.Services.AddScoped<IContactsListService, ContactsListService>();
 builder.Services.AddScoped<IContactsService, ContactsService>();
 builder.Services.AddScoped<IUsersListService, UsersListService>();
 builder.Services.AddScoped<IUsersService, UsersService>();
+builder.Services.AddScoped<IUserSessionService, UserSessionService>();
 builder.Services.AddScoped<ITokenService, JwtService>();
 
 var coreConnectionString = builder.Configuration.GetValue<string>("Infrastructure:CoreSqlConnectionString");
@@ -32,6 +35,9 @@ builder.Services.AddDbContext<CoreContext>(
 builder.Services.AddDbContextFactory<CoreContext>(
     options => options.UseSqlServer(coreConnectionString)
 );
+var redisConnectionString = builder.Configuration.GetValue<string>("Infrastructure:RedisConnectionString");
+var redisConnection = ConnectionMultiplexer.Connect(redisConnectionString);
+builder.Services.AddSingleton<IConnectionMultiplexer>(redisConnection);
 
 var app = builder.Build();
 

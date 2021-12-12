@@ -1,4 +1,4 @@
-namespace WoodenWorkshop.Crm.Api.Models;
+namespace WoodenWorkshop.Crm.Api.Models.Http;
 
 public class BaseApiResponse
 {

@@ -5,6 +5,7 @@ using System.Text.Unicode;
 
 using WoodenWorkshop.Common.Exceptions;
 using WoodenWorkshop.Crm.Api.Models;
+using WoodenWorkshop.Crm.Api.Models.Http;
 
 namespace WoodenWorkshop.Crm.Api.Middleware;
 
