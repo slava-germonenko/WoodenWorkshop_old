@@ -20,18 +20,18 @@ public class JwtService : ITokenService
 
     private const string PermissionsClaimName = "perm";
 
-    private readonly IOptionsSnapshot<Security> _optionsOptions;
+    private readonly IOptionsSnapshot<Security> _securityOptions;
 
-    private string JwtSecret => _optionsOptions.Value.JwtSecret;
+    private string JwtSecret => _securityOptions.Value.JwtSecret;
 
-    private int AccessTokenTtl => _optionsOptions.Value.AccessTokenTtlSeconds;
+    private int AccessTokenTtl => _securityOptions.Value.AccessTokenTtlSeconds;
 
     private SymmetricSecurityKey SecurityKey => new(Encoding.UTF8.GetBytes(JwtSecret));
 
 
-    public JwtService(IOptionsSnapshot<Security> optionsOptions)
+    public JwtService(IOptionsSnapshot<Security> securityOptions)
     {
-        _optionsOptions = optionsOptions;
+        _securityOptions = securityOptions;
     }
 
 
@@ -62,7 +62,7 @@ public class JwtService : ITokenService
         return new TokenInfo(
             Convert.ToBase64String(random),
             issueDate,
-            issueDate.AddMinutes(_optionsOptions.Value.RefreshTokenTtlMinutes)
+            issueDate.AddMinutes(_securityOptions.Value.RefreshTokenTtlMinutes)
         );
     }
 
