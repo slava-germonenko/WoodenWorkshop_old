@@ -4,6 +4,7 @@ using Microsoft.Extensions.Options;
 
 using WoodenWorkshop.Core.Users.Services.Abstractions;
 using WoodenWorkshop.Crm.Api.Dtos;
+using WoodenWorkshop.Crm.Api.Models;
 using WoodenWorkshop.Crm.Api.Models.Http;
 using WoodenWorkshop.Crm.Api.Options;
 using WoodenWorkshop.Crm.Api.Services.Abstractions;
@@ -58,16 +59,7 @@ public class AuthorizationController : ControllerBase
             )
         );
 
-        Response.Cookies.Append(
-            RefreshTokenCookieName,
-            refreshToken.Token,
-            new CookieOptions
-            {
-                HttpOnly = true,
-                Expires = refreshToken.ExpireDate,
-                SameSite = SameSiteMode.Strict,
-            }
-        );
+        AddRefreshTokenCookie(refreshToken);
 
         var authorizationResponse = new AuthorizationResponse(
             accessToken.Token,
@@ -106,6 +98,8 @@ public class AuthorizationController : ControllerBase
             )
         );
 
+        AddRefreshTokenCookie(newRefreshToken);
+
 
         var authorizationResponse = new AuthorizationResponse(
             newAccessToken.Token,
@@ -132,5 +126,19 @@ public class AuthorizationController : ControllerBase
         );
 
         return NoContent();
+    }
+
+    private void AddRefreshTokenCookie(TokenInfo tokenInfo)
+    {
+        Response.Cookies.Append(
+            RefreshTokenCookieName,
+            tokenInfo.Token,
+            new CookieOptions
+            {
+                HttpOnly = true,
+                Expires = tokenInfo.ExpireDate,
+                SameSite = SameSiteMode.Strict,
+            }
+        );
     }
 }
