@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 using WoodenWorkshop.Common.Models.Paging;
@@ -8,7 +9,7 @@ using WoodenWorkshop.Crm.Api.Dtos;
 
 namespace WoodenWorkshop.Crm.Api.Controllers;
 
-[ApiController, Route("api/[controller]")]
+[Authorize, ApiController, Route("api/[controller]")]
 public class ContactsController : ControllerBase
 {
     private readonly IContactsListService _contactsListService;
