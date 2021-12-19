@@ -6,8 +6,9 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY ["src/WoodenWorkshop.Crm.Api/WoodenWorkshop.Crm.Api.csproj", "WoodenWorkshop.Crm.Api/"]
-RUN dotnet restore "src/WoodenWorkshop.Crm.Api/WoodenWorkshop.Crm.Api.csproj"
+RUN dotnet restore "WoodenWorkshop.Crm.Api/WoodenWorkshop.Crm.Api.csproj"
 COPY . .
+COPY ../* .
 WORKDIR "/src/WoodenWorkshop.Crm.Api"
 RUN dotnet build "WoodenWorkshop.Crm.Api.csproj" -c Release -o /app/build
 
