@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 
 using WoodenWorkshop.Common.Exceptions;
+using WoodenWorkshop.Common.Hashing;
 using WoodenWorkshop.Core.Models;
 using WoodenWorkshop.Core.Users.Services.Abstractions;
 
@@ -28,12 +29,23 @@ public class UsersService : IUsersService
         return user;
     }
 
-    public async Task<User> GetUserDetailsAsync(string emailAddress)
+    public async Task<User> GetUserDetailsAsync(string emailAddress, string? password = null)
     {
         var user = await _context.Users.FirstOrDefaultAsync(u => u.EmailAddress == emailAddress);
         if (user is null)
         {
             throw new NotFoundException($"Пользователь с почтой {emailAddress} не найден.");
+        }
+
+        if (string.IsNullOrEmpty(password))
+        {
+            return user;
+        }
+
+        using var hashingUtility = new HashingUtility();
+        if (hashingUtility.ComputeHash(password) != user.PasswordHash)
+        {
+            throw new NotFoundException($"Пользователь с почтой {emailAddress} и указанным паролем не найден.");
         }
 
         return user;

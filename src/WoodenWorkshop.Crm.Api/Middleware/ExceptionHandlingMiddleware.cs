@@ -4,7 +4,7 @@ using System.Text.Json;
 using System.Text.Unicode;
 
 using WoodenWorkshop.Common.Exceptions;
-using WoodenWorkshop.Crm.Api.Models;
+using WoodenWorkshop.Crm.Api.Models.Http;
 
 namespace WoodenWorkshop.Crm.Api.Middleware;
 
@@ -38,6 +38,10 @@ public class ExceptionHandlingMiddleware
         catch (NotFoundException e)
         {
             await WriteResponse(context, HttpStatusCode.NotFound, new BaseApiResponse(e.Message));
+        }
+        catch (UnauthorizedException e)
+        {
+            await WriteResponse(context, HttpStatusCode.Unauthorized, new BaseApiResponse(e.Message));
         }
         catch (Exception e)
         {
