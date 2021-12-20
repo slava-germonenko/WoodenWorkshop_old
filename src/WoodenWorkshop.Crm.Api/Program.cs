@@ -21,7 +21,6 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 var jwtSecret = builder.Configuration.GetValue<string>("Security:JwtSecret");
-Console.WriteLine(jwtSecret);
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -71,7 +70,9 @@ else
     app.UseHttpsRedirection();
 }
 
+app.UseRouting();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 

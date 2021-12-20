@@ -37,7 +37,7 @@ public class JwtService : ITokenService
 
     public TokenInfo BuildAccessToken(User user, IEnumerable<string>? permissions = null)
     {
-        var issueDate = DateTime.Now;
+        var issueDate = DateTime.UtcNow;
         var expireDate = issueDate.AddSeconds(AccessTokenTtl);
         var tokenDescriptor = new SecurityTokenDescriptor
         {
