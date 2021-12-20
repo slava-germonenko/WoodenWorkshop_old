@@ -32,6 +32,7 @@ builder.Services
             ValidateLifetime = true,
             RequireExpirationTime = true,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret)),
+            ClockSkew = TimeSpan.Zero,
         };
     });
 

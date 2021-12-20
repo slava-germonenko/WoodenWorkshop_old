@@ -78,6 +78,7 @@ public class JwtService : ITokenService
                 ValidateLifetime = true,
                 RequireExpirationTime = true,
                 IssuerSigningKey = SecurityKey,
+                ClockSkew = TimeSpan.Zero,
             }, out _);
 
             return true;
