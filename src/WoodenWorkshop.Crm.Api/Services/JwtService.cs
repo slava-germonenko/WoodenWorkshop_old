@@ -58,7 +58,7 @@ public class JwtService : ITokenService
     public TokenInfo BuildRefreshToken()
     {
         var random = RandomNumberGenerator.GetBytes(64);
-        var issueDate = DateTime.UtcNow;
+        var issueDate = DateTime.Now;
         return new TokenInfo(
             Convert.ToBase64String(random),
             issueDate,
@@ -73,9 +73,12 @@ public class JwtService : ITokenService
         {
             claims = tokenHandler.ValidateToken(token, new TokenValidationParameters
             {
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                ValidateLifetime = true,
                 RequireExpirationTime = true,
                 IssuerSigningKey = SecurityKey,
-                ValidateIssuerSigningKey = true,
+                ClockSkew = TimeSpan.Zero,
             }, out _);
 
             return true;
