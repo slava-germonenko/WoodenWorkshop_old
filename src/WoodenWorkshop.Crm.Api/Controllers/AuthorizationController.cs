@@ -111,7 +111,7 @@ public class AuthorizationController : ControllerBase
         return Ok(authorizationResponse);
     }
 
-    [HttpDelete("expire")]
+    [HttpPut("expire")]
     public async Task<NoContentResult> ExpireRefreshTokenAsync(
         [FromBody] RefreshTokenDto refreshTokenDto
     )
