@@ -27,9 +27,11 @@ public class UsersController : UserAwareController
     [HttpGet("{userId:guid}/permissions")]
     public async Task<ActionResult<UserPermissionsDto>> GetUserPermissionsAsync(Guid userId)
     {
-        var permissions = await _userRolesService.GetUserRolesAsync(userId);
+        var roles = await _userRolesService.GetUserRolesAsync(userId);
         var permissionsDto = new UserPermissionsDto(
-            permissions.Select(p => p.Name).ToList()
+            roles.SelectMany(p => p.Permissions)
+                .Select(p => p.Name)
+                .ToList()
         );
         return Ok(permissionsDto);
     }
