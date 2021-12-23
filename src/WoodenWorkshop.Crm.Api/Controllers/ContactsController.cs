@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
+using WoodenWorkshop.Common.Models;
 using WoodenWorkshop.Common.Models.Paging;
 using WoodenWorkshop.Core.Contacts.Models;
 using WoodenWorkshop.Core.Contacts.Services.Abstractions;
@@ -37,10 +37,11 @@ public class ContactsController : ControllerBase
     [HttpGet("")]
     public async Task<ActionResult<PagedCollection<Contact>>> GetContactsListAsync(
         [FromQuery] Page page,
-        [FromQuery] ContactsFilter contactsFilter
+        [FromQuery] ContactsFilter contactsFilter,
+        [FromQuery] OrderByQuery orderByQuery
     )
     {
-        var contacts = await _contactsListService.GetContactsListAsync(page, contactsFilter);
+        var contacts = await _contactsListService.GetContactsListAsync(page, contactsFilter, orderByQuery);
         return Ok(contacts);
     }
 
