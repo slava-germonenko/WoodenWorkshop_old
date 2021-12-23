@@ -1,7 +1,9 @@
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 
 using WoodenWorkshop.Common.Exceptions;
 using WoodenWorkshop.Common.Extensions;
+using WoodenWorkshop.Common.Models;
 using WoodenWorkshop.Common.Models.Paging;
 using WoodenWorkshop.Core.Contacts.Models;
 using WoodenWorkshop.Core.Contacts.Services.Abstractions;
@@ -20,10 +22,25 @@ public class ContactsListService : IContactsListService
     }
 
 
-    public async Task<PagedCollection<Contact>> GetContactsListAsync(Page page, ContactsFilter? contactsFilter = null)
+    public async Task<PagedCollection<Contact>> GetContactsListAsync(
+        Page page,
+        ContactsFilter? contactsFilter = null,
+        OrderByQuery? orderByQuery = null
+    )
     {
         var contactsQuery = _context.Contacts
             .AsNoTracking();
+
+        if (orderByQuery is not null)
+        {
+            contactsQuery = orderByQuery.IsAsc
+                ? contactsQuery.OrderBy(GetContactOrderByExpression(orderByQuery))
+                : contactsQuery.OrderByDescending(GetContactOrderByExpression(orderByQuery));
+        }
+        else
+        {
+            contactsQuery = contactsQuery.OrderByDescending(contact => contact.Created);
+        }
 
         if (contactsFilter is not null)
         {
@@ -64,5 +81,17 @@ public class ContactsListService : IContactsListService
             _context.Contacts.Remove(contact);
             await _context.SaveChangesAsync();
         }
+    }
+
+    private Expression<Func<Contact, object>> GetContactOrderByExpression(OrderByQuery orderByQuery)
+    {
+        return orderByQuery.OrderBy?.ToLower() switch
+        {
+            "firstname" => contact => contact.FirstName,
+            "lastname" => contact => contact.LastName,
+            "emailaddress" => contact => contact.EmailAddress,
+            "phonenumber" => contact => contact.PhoneNumber,
+            _ => contact => contact.Created
+        };
     }
 }
