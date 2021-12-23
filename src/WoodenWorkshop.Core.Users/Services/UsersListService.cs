@@ -33,7 +33,8 @@ public class UsersListService : IUsersListService
         }
 
         var users = await usersQuery.Page(page).ToListAsync();
-        return new(page, users);
+        var contacts = await usersQuery.CountAsync();
+        return new(page, users, contacts);
     }
 
     public async Task<User> AddUserAsync(User user)

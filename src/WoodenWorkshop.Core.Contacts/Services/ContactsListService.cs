@@ -35,7 +35,8 @@ public class ContactsListService : IContactsListService
         }
 
         var contacts = await contactsQuery.Include(c => c.Assignee).Page(page).ToListAsync();
-        return new(page, contacts);
+        var contactsCount = await contactsQuery.CountAsync();
+        return new(page, contacts, contactsCount);
     }
 
     public async Task<Contact> AddContactAsync(Contact contact)
