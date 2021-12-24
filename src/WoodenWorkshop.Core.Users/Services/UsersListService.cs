@@ -1,7 +1,10 @@
+using System.Linq.Expressions;
+
 using Microsoft.EntityFrameworkCore;
 
 using WoodenWorkshop.Common.Exceptions;
 using WoodenWorkshop.Common.Extensions;
+using WoodenWorkshop.Common.Models;
 using WoodenWorkshop.Common.Models.Paging;
 using WoodenWorkshop.Core.Models;
 using WoodenWorkshop.Core.Users.Models;
@@ -20,9 +23,24 @@ public class UsersListService : IUsersListService
     }
 
 
-    public async Task<PagedCollection<User>> GetUsersListAsync(Page page, UsersFilter? filter = null)
+    public async Task<PagedCollection<User>> GetUsersListAsync(
+        Page page,
+        UsersFilter? filter = null,
+        OrderByQuery? orderBy = null
+    )
     {
         var usersQuery = _context.Users.AsNoTracking();
+
+        if (orderBy is null)
+        {
+            usersQuery = usersQuery.OrderByDescending(u => u.Updated);
+        }
+        else
+        {
+            usersQuery = orderBy.IsAsc
+                ? usersQuery.OrderBy(GetOrderByExpression(orderBy))
+                : usersQuery.OrderByDescending(GetOrderByExpression(orderBy));
+        }
 
         if (filter is not null)
         {
@@ -59,5 +77,16 @@ public class UsersListService : IUsersListService
             _context.Users.Remove(user);
             await _context.SaveChangesAsync();
         }
+    }
+
+    private Expression<Func<User, object>> GetOrderByExpression(OrderByQuery orderByQuery)
+    {
+        return orderByQuery.OrderBy?.ToLower() switch
+        {
+            "firstname" => user => user.FirstName,
+            "lastname" => user => user.LastName,
+            "emailaddress" => user => user.EmailAddress,
+            _ => user => user.Updated,
+        };
     }
 }
