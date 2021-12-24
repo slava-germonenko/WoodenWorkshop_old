@@ -5,10 +5,10 @@ namespace WoodenWorkshop.Crm.Api.Extensions;
 
 public static class UserExtensions
 {
-    public static void UpdateFromProfile(this User user, ProfileDto profile)
+    public static void UpdateFromUserDto(this User user, UserDto userDto)
     {
-        user.EmailAddress = profile.EmailAddress;
-        user.FirstName = profile.FirstName;
-        user.LastName = profile.LastName;
+        user.EmailAddress = userDto.EmailAddress;
+        user.FirstName = userDto.FirstName;
+        user.LastName = userDto.LastName;
     }
 }

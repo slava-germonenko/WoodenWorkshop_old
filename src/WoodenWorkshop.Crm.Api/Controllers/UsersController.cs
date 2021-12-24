@@ -1,8 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
+using WoodenWorkshop.Common.Exceptions;
+using WoodenWorkshop.Common.Models.Paging;
+using WoodenWorkshop.Core.Models.Enums;
 using WoodenWorkshop.Core.Users.Services.Abstractions;
 using WoodenWorkshop.Crm.Api.Dtos;
+using WoodenWorkshop.Crm.Api.Extensions;
 
 namespace WoodenWorkshop.Crm.Api.Controllers;
 
@@ -11,17 +15,33 @@ public class UsersController : UserAwareController
 {
     private readonly IUserRolesService _userRolesService;
 
+    private readonly IUsersService _usersService;
 
-    public UsersController(IUserRolesService userRolesService)
+
+    public UsersController(IUserRolesService userRolesService, IUsersService usersService)
     {
         _userRolesService = userRolesService;
+        _usersService = usersService;
     }
 
 
     [HttpGet("current")]
-    public ActionResult<UserDto> GetCurrentUser()
+    public async Task<ActionResult<UserDto>> GetCurrentUser()
     {
-        return new UserDto(CurrentUserId);
+        return await GetUserAsync(CurrentUserId);
+    }
+
+    [HttpGet("{userId:guid}")]
+    public async Task<ActionResult<UserDto>> GetUserAsync(Guid userId)
+    {
+        var user = await _usersService.GetUserDetailsAsync(userId);
+        return Ok((UserDto) user);
+    }
+
+    [HttpGet("")]
+    public async Task<ActionResult<PagedCollection<UserDto>>> GetUsersList()
+    {
+        throw new NotImplementedException();
     }
 
     [HttpGet("{userId:guid}/permissions")]
@@ -34,5 +54,22 @@ public class UsersController : UserAwareController
                 .ToList()
         );
         return Ok(permissionsDto);
+    }
+    
+    [HttpPatch("")]
+    public async Task<ActionResult<UserDto>> UpdateProfileAsync(
+        [FromBody] UserDto userDto
+    )
+    {
+        if (CurrentUserId != userDto.Id && CurrentUserPermissions.Contains(Permissions.Admin))
+        {
+            throw new UnauthorizedException("Вы не может обновить чужой профиль.");
+        }
+
+        var user = await _usersService.GetUserDetailsAsync(userDto.Id);
+        user.UpdateFromUserDto(userDto);
+        await _usersService.UpdateUserDetailsAsync(user);
+
+        return Ok(userDto);
     }
 }
