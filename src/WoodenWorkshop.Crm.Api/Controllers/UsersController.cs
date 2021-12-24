@@ -84,9 +84,9 @@ public class UsersController : UserAwareController
     }
 
     [HttpPost("")]
-    public async Task<ActionResult<UserDto>> CreateUserAsync([FromBody] User user)
+    public async Task<ActionResult<UserDto>> CreateUserAsync([FromBody] UserWithPasswordDto user)
     {
-        var createdUser = await _usersListService.AddUserAsync(user);
+        var createdUser = await _usersListService.AddUserAsync((User) user);
         return Ok((UserDto) createdUser);
     }
 
