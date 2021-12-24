@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using WoodenWorkshop.Common.Exceptions;
 using WoodenWorkshop.Common.Models;
 using WoodenWorkshop.Common.Models.Paging;
+using WoodenWorkshop.Core.Models;
 using WoodenWorkshop.Core.Models.Enums;
 using WoodenWorkshop.Core.Users.Models;
 using WoodenWorkshop.Core.Users.Services.Abstractions;
@@ -74,7 +75,21 @@ public class UsersController : UserAwareController
         );
         return Ok(permissionsDto);
     }
-    
+
+    [HttpGet("{userId:guid}/roles")]
+    public async Task<ActionResult<ICollection<Role>>> GetUserRolesAsync(Guid userId)
+    {
+        var roles = await _userRolesService.GetUserRolesAsync(userId);
+        return Ok(new UserRolesDto(roles));
+    }
+
+    [HttpPost("")]
+    public async Task<ActionResult<UserDto>> CreateUserAsync([FromBody] User user)
+    {
+        var createdUser = await _usersListService.AddUserAsync(user);
+        return Ok((UserDto) createdUser);
+    }
+
     [HttpPatch("")]
     public async Task<ActionResult<UserDto>> UpdateProfileAsync(
         [FromBody] UserDto userDto
@@ -90,5 +105,22 @@ public class UsersController : UserAwareController
         await _usersService.UpdateUserDetailsAsync(user);
 
         return Ok(userDto);
+    }
+
+    [HttpPost("{userId:guid}/roles")]
+    public async Task<NoContentResult> AddUserRoleAsync(
+        [FromBody] UserRoleDto roleDto,
+        [FromRoute] Guid userId
+    )
+    {
+        await _userRolesService.AssignRoleToUserAsync(userId, roleDto.RoleId);
+        return NoContent();
+    }
+
+    [HttpDelete("{userId:guid}/roles/{roleId:guid}")]
+    public async Task<NoContentResult> RemoveUserRoleAsync(Guid userId, Guid roleId)
+    {
+        await _userRolesService.UnassignRoleFromUserAsync(userId, roleId);
+        return NoContent();
     }
 }

@@ -59,6 +59,14 @@ public class UsersService : IUsersService
             throw new NotFoundException($"Пользователь с индентификатором {user.Id} не найден.");
         }
 
+        var emailInUseByAnotherUser = await _context.Users
+            .AnyAsync(u => u.EmailAddress == user.EmailAddress && u.Id != user.Id);
+
+        if (emailInUseByAnotherUser)
+        {
+            throw new DuplicateException($"Пользователь с почтой {user.EmailAddress} уже существует.");
+        }
+
         _context.Users.Update(user);
         await _context.SaveChangesAsync();
         return user;
