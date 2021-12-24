@@ -45,9 +45,18 @@ public class UsersListService : IUsersListService
         if (filter is not null)
         {
             usersQuery = usersQuery
-                .WhereNotNull(u => u.EmailAddress.ContainsIgnoreCase(filter.EmailAddress!), filter.EmailAddress)
-                .WhereNotNull(u => u.EmailAddress.ContainsIgnoreCase(filter.FirstName!), filter.EmailAddress)
-                .WhereNotNull(u => u.EmailAddress.ContainsIgnoreCase(filter.LastName!), filter.EmailAddress);
+                .WhereNotNull(u => u.EmailAddress.Contains(filter.EmailAddress!), filter.EmailAddress)
+                .WhereNotNull(u => u.EmailAddress.Contains(filter.FirstName!), filter.EmailAddress)
+                .WhereNotNull(u => u.EmailAddress.Contains(filter.LastName!), filter.EmailAddress);
+        }
+
+        if (!string.IsNullOrEmpty(filter?.Search))
+        {
+            usersQuery = usersQuery
+                .Where(u => u.FirstName.Contains(filter.Search)
+                            || u.LastName.Contains(filter.Search)
+                            || u.EmailAddress.Contains(filter.Search)
+                );
         }
 
         var users = await usersQuery.Page(page).ToListAsync();

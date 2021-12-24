@@ -35,21 +35,26 @@ public class ContactsController : ControllerBase
     }
 
     [HttpGet("")]
-    public async Task<ActionResult<PagedCollection<Contact>>> GetContactsListAsync(
+    public async Task<ActionResult<PagedCollection<ContactDto>>> GetContactsListAsync(
         [FromQuery] Page page,
         [FromQuery] ContactsFilter contactsFilter,
         [FromQuery] OrderByQuery orderByQuery
     )
     {
         var contacts = await _contactsListService.GetContactsListAsync(page, contactsFilter, orderByQuery);
-        return Ok(contacts);
+        var contactDtos = new PagedCollection<ContactDto>(
+            contacts.Page,
+            contacts.Items.Select(c => (ContactDto) c).ToArray(),
+            contacts.Total
+        );
+        return Ok(contactDtos);
     }
 
     [HttpPost("")]
-    public async Task<ActionResult<Contact>> CreateContactAsync([FromBody] ContactDto contactDto)
+    public async Task<ActionResult<ContactDto>> CreateContactAsync([FromBody] ContactDto contactDto)
     {
         var contact = await _contactsListService.AddContactAsync(contactDto);
-        return Ok(contact);
+        return Ok((ContactDto) contact);
     }
 
     [HttpPut("")]
@@ -59,7 +64,7 @@ public class ContactsController : ControllerBase
             ? await _contactsListService.AddContactAsync(contactDto)
             : await _contactsService.UpdateContactDetailsAsync(contactDto);
 
-        return Ok(contact);
+        return Ok((ContactDto) contact);
     }
 
     [HttpDelete("{id:guid}")]

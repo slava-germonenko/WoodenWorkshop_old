@@ -9,7 +9,7 @@ public interface IContactsListService
 {
     Task<PagedCollection<Contact>> GetContactsListAsync(
         Page page,
-        ContactsFilter? contactsFilter = null,
+        ContactsFilter? filter = null,
         OrderByQuery? orderByQuery = null
     );
 

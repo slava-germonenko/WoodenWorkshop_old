@@ -24,7 +24,7 @@ public class ContactsListService : IContactsListService
 
     public async Task<PagedCollection<Contact>> GetContactsListAsync(
         Page page,
-        ContactsFilter? contactsFilter = null,
+        ContactsFilter? filter = null,
         OrderByQuery? orderByQuery = null
     )
     {
@@ -42,13 +42,24 @@ public class ContactsListService : IContactsListService
             contactsQuery = contactsQuery.OrderByDescending(contact => contact.Created);
         }
 
-        if (contactsFilter is not null)
+        if (filter is not null)
         {
             contactsQuery = contactsQuery
-                .WhereNotNull(c => c.AssigneeId == contactsFilter.AssigneeId, contactsFilter.AssigneeId)
-                .WhereNotNull(c => c.FirstName == contactsFilter.FirstName, contactsFilter.FirstName)
-                .WhereNotNull(c => c.LastName == contactsFilter.LastName, contactsFilter.LastName)
-                .WhereNotNull(c => c.EmailAddress == contactsFilter.EmailAddress, contactsFilter.EmailAddress);
+                .WhereNotNull(c => c.AssigneeId == filter.AssigneeId, filter.AssigneeId)
+                .WhereNotNull(c => c.FirstName!.Contains(filter.FirstName!), filter.FirstName)
+                .WhereNotNull(c => c.LastName!.Contains(filter.LastName!), filter.LastName)
+                .WhereNotNull(c => c.EmailAddress!.Contains(filter.EmailAddress!), filter.EmailAddress)
+                .WhereNotNull(c => c.PhoneNumber!.Contains(filter.PhoneNumber!), filter.PhoneNumber);;
+        }
+        
+        if (!string.IsNullOrEmpty(filter?.Search))
+        {
+            contactsQuery = contactsQuery
+                .Where(u => u.FirstName.Contains(filter.Search)
+                            || u.LastName.Contains(filter.Search)
+                            || u.EmailAddress.Contains(filter.Search)
+                            || u.PhoneNumber.Contains(filter.Search)
+                );
         }
 
         var contacts = await contactsQuery.Include(c => c.Assignee).Page(page).ToListAsync();
