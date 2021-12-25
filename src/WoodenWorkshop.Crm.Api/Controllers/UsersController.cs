@@ -52,10 +52,10 @@ public class UsersController : UserAwareController
     public async Task<ActionResult<PagedCollection<UserDto>>> GetUsersList(
         [FromQuery] Page page,
         [FromQuery] UsersFilter usersFilter,
-        [FromQuery] OrderByQuery orderBy
+        [FromQuery] OrderByQuery orderByQuery
     )
     {
-        var users = await _usersListService.GetUsersListAsync(page, usersFilter, orderBy);
+        var users = await _usersListService.GetUsersListAsync(page, usersFilter, orderByQuery);
         var userDtos = new PagedCollection<UserDto>(
             users.Page,
             users.Items.Select((u) => (UserDto) u).ToList(),
