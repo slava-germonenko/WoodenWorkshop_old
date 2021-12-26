@@ -43,6 +43,6 @@ public class RolesService : IRolesService
         _context.Roles.Update(role);
         await _context.SaveChangesAsync();
 
-        return role;
+        return await GetRoleAsync(role.Id);
     }
 }

@@ -8,6 +8,8 @@ using StackExchange.Redis;
 using WoodenWorkshop.Core;
 using WoodenWorkshop.Core.Contacts.Services;
 using WoodenWorkshop.Core.Contacts.Services.Abstractions;
+using WoodenWorkshop.Core.Roles.Services;
+using WoodenWorkshop.Core.Roles.Services.Abstractions;
 using WoodenWorkshop.Core.Users.Services;
 using WoodenWorkshop.Core.Users.Services.Abstractions;
 using WoodenWorkshop.Crm.Api.Middleware;
@@ -41,6 +43,9 @@ builder.Services.Configure<Security>(builder.Configuration.GetSection("Security"
 
 builder.Services.AddScoped<IContactsListService, ContactsListService>();
 builder.Services.AddScoped<IContactsService, ContactsService>();
+builder.Services.AddScoped<IRolePermissionsService, RolePermissionsService>();
+builder.Services.AddScoped<IRolesListService, RolesListService>();
+builder.Services.AddScoped<IRolesService, RolesService>();
 builder.Services.AddScoped<IUserRolesService, UserRolesService>();
 builder.Services.AddScoped<IUsersListService, UsersListService>();
 builder.Services.AddScoped<IUsersService, UsersService>();

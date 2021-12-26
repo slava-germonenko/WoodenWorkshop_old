@@ -16,40 +16,6 @@ public class RolePermissionsService : IRolePermissionsService
         _rolesService = rolesService;
     }
 
-
-    public async Task AddPermissionToRoleAsync(Guid roleId, string permission)
-    {
-        var role = await _rolesService.GetRoleAsync(roleId);
-        if (role.Permissions.Any(p => p.Name == permission))
-        {
-            return;
-        }
-        
-        role.Permissions.Add(new ()
-        {
-            Name = permission,
-        });
-
-        _context.Roles.Update(role);
-        await _context.SaveChangesAsync();
-    }
-
-    public async Task RemovePermissionFromRoleAsync(Guid roleId, string permission)
-    {
-        var role = await _rolesService.GetRoleAsync(roleId);
-        if (role.Permissions.All(p => p.Name != permission))
-        {
-            return;
-        }
-
-        role.Permissions.Remove(
-            role.Permissions.First(p => p.Name == permission)
-        );
-        
-        _context.Roles.Update(role);
-        await _context.SaveChangesAsync();
-    }
-
     public async Task SetRolePermissionsAsync(Guid roleId, ICollection<string> permissionNames)
     {
         var role = await _rolesService.GetRoleAsync(roleId);
