@@ -18,6 +18,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\WoodenWorkshop.Core.Contacts\WoodenWorkshop.Core.Contacts.csproj" />
+      <ProjectReference Include="..\WoodenWorkshop.Core.Roles\WoodenWorkshop.Core.Roles.csproj" />
       <ProjectReference Include="..\WoodenWorkshop.Core.Users\WoodenWorkshop.Core.Users.csproj" />
       <ProjectReference Include="..\WoodenWorkshop.Core\WoodenWorkshop.Core.csproj" />
     </ItemGroup>
