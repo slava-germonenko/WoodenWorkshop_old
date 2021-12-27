@@ -20,7 +20,11 @@ public class UsersService : IUsersService
 
     public async Task<User> GetUserDetailsAsync(Guid id)
     {
-        var user = await _context.Users.FindAsync(id);
+        var user = await _context.Users
+            .AsNoTracking()
+            .Include(u => u.Roles)
+            .ThenInclude(r => r.Permissions)
+            .FirstOrDefaultAsync(u => u.Id == id);
         if (user is null)
         {
             throw new NotFoundException($"Пользователь с индентификатором {id} не найден.");
@@ -31,7 +35,11 @@ public class UsersService : IUsersService
 
     public async Task<User> GetUserDetailsAsync(string emailAddress, string? password = null)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.EmailAddress == emailAddress);
+        var user = await _context.Users
+            .AsNoTracking()
+            .Include(u => u.Roles)
+            .ThenInclude(r => r.Permissions)
+            .FirstOrDefaultAsync(u => u.EmailAddress == emailAddress);
         if (user is null)
         {
             throw new NotFoundException($"Пользователь с почтой {emailAddress} не найден.");

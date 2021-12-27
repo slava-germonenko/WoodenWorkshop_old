@@ -47,7 +47,11 @@ public class AuthorizationController : ControllerBase
     )
     {
         var user = await _usersService.GetUserDetailsAsync(userCredential.Username, userCredential.Password);
-        var accessToken = _tokenService.BuildAccessToken(user);
+        var permissions = user.Roles
+            .SelectMany(r => r.Permissions)
+            .Select(p => p.Name)
+            .ToArray();
+        var accessToken = _tokenService.BuildAccessToken(user, permissions);
         var refreshToken = _tokenService.BuildRefreshToken();
 
         await _userSessionService.SaveUserSession(
@@ -84,8 +88,11 @@ public class AuthorizationController : ControllerBase
             refreshTokenDto.RefreshToken ?? Request.Cookies[RefreshTokenCookieName]
         );
         var user = await _usersService.GetUserDetailsAsync(session.UserId);
-
-        var newAccessToken = _tokenService.BuildAccessToken(user);
+        var permissions = user.Roles
+            .SelectMany(r => r.Permissions)
+            .Select(p => p.Name)
+            .ToArray();
+        var newAccessToken = _tokenService.BuildAccessToken(user, permissions);
         var newRefreshToken = _tokenService.BuildRefreshToken();
 
         await _userSessionService.ExpireUserSession(refreshTokenDto.RefreshToken);
