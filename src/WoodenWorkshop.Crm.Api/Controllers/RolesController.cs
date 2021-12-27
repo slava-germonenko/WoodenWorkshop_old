@@ -12,7 +12,7 @@ using WoodenWorkshop.Crm.Api.Filters;
 
 namespace WoodenWorkshop.Crm.Api.Controllers;
 
-[Authorize, ApiController, Route("api/[controller]"), RequirePermissions(Permissions.Admin)]
+[Authorize, ApiController, RequirePermissions(Permissions.Admin), Route("api/[controller]")]
 public class RolesController : ControllerBase
 {
     private readonly IRolePermissionsService _rolePermissionsService;
@@ -70,7 +70,7 @@ public class RolesController : ControllerBase
             Name = role.Name,
         });
 
-        return Ok((RoleDto) role);
+        return Ok((RoleDto) updatedRole);
     }
 
     [HttpDelete("{roleId:guid}")]

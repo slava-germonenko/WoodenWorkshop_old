@@ -5,7 +5,9 @@ using WoodenWorkshop.Common.Models.Paging;
 using WoodenWorkshop.Core.Contacts.Models;
 using WoodenWorkshop.Core.Contacts.Services.Abstractions;
 using WoodenWorkshop.Core.Models;
+using WoodenWorkshop.Core.Models.Enums;
 using WoodenWorkshop.Crm.Api.Dtos;
+using WoodenWorkshop.Crm.Api.Filters;
 
 namespace WoodenWorkshop.Crm.Api.Controllers;
 
@@ -28,6 +30,12 @@ public class ContactsController : ControllerBase
 
 
     [HttpGet("{id:guid}")]
+    [RequirePermissions(
+        PermissionResolutionStrategies.HasAny,
+        Permissions.Admin,
+        Permissions.Contacts,
+        Permissions.ViewContacts
+    )]
     public async Task<ActionResult<Contact>> GetContactDetails(Guid id)
     {
         var contact = await _contactsService.GetContactDetailsAsync(id);
@@ -35,6 +43,12 @@ public class ContactsController : ControllerBase
     }
 
     [HttpGet("")]
+    [RequirePermissions(
+        PermissionResolutionStrategies.HasAny,
+        Permissions.Admin,
+        Permissions.Contacts,
+        Permissions.ViewContacts
+    )]
     public async Task<ActionResult<PagedCollection<ContactDto>>> GetContactsListAsync(
         [FromQuery] Page page,
         [FromQuery] ContactsFilter contactsFilter,
@@ -51,6 +65,12 @@ public class ContactsController : ControllerBase
     }
 
     [HttpPost("")]
+    [RequirePermissions(
+        PermissionResolutionStrategies.HasAny,
+        Permissions.Admin,
+        Permissions.Contacts,
+        Permissions.ManageContacts
+    )]
     public async Task<ActionResult<ContactDto>> CreateContactAsync([FromBody] ContactDto contactDto)
     {
         var contact = await _contactsListService.AddContactAsync(contactDto);
@@ -58,6 +78,12 @@ public class ContactsController : ControllerBase
     }
 
     [HttpPut("")]
+    [RequirePermissions(
+        PermissionResolutionStrategies.HasAny,
+        Permissions.Admin,
+        Permissions.Contacts,
+        Permissions.ManageContacts
+    )]
     public async Task<ActionResult<Contact>> SaveContactAsync([FromBody] ContactDto contactDto)
     {
         var contact = contactDto.Id is null
@@ -68,6 +94,12 @@ public class ContactsController : ControllerBase
     }
 
     [HttpDelete("{id:guid}")]
+    [RequirePermissions(
+        PermissionResolutionStrategies.HasAny,
+        Permissions.Admin,
+        Permissions.Contacts,
+        Permissions.RemoveContacts
+    )]
     public async Task<NoContentResult> RemoveContactAsync(Guid id)
     {
         await _contactsListService.RemoveContactAsync(id);

@@ -10,10 +10,11 @@ using WoodenWorkshop.Core.Users.Models;
 using WoodenWorkshop.Core.Users.Services.Abstractions;
 using WoodenWorkshop.Crm.Api.Dtos;
 using WoodenWorkshop.Crm.Api.Extensions;
+using WoodenWorkshop.Crm.Api.Filters;
 
 namespace WoodenWorkshop.Crm.Api.Controllers;
 
-[ApiController, Authorize, Route("api/[controller]")]
+[ApiController, Authorize, RequirePermissions(Permissions.Admin), Route("api/[controller]")]
 public class UsersController : UserAwareController
 {
     private readonly IUserRolesService _userRolesService;
