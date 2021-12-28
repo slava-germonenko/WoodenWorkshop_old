@@ -19,12 +19,16 @@ public class RolePermissionsService : IRolePermissionsService
     public async Task SetRolePermissionsAsync(Guid roleId, ICollection<string> permissionNames)
     {
         var role = await _rolesService.GetRoleAsync(roleId);
-        role.Permissions = permissionNames.Select(pn => new Permission
-        {
-            Name = pn,
-        }).ToList();
-        
-        _context.Roles.Update(role);
+        _context.Permissions.RemoveRange(role.Permissions);
+
+        var newPermissions = permissionNames
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .Select(p => new Permission
+            {
+                Name = p.ToLower(),
+                RoleId = roleId,
+            });
+        await _context.Permissions.AddRangeAsync(newPermissions);
         await _context.SaveChangesAsync();
     }
 }

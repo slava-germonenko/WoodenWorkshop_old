@@ -50,6 +50,13 @@ public class RolesController : ControllerBase
         return Ok(roleDtos);
     }
 
+    [HttpGet("{roleId:guid}")]
+    public async Task<ActionResult<RoleDto>> GetRoleDetailsAsync(Guid roleId)
+    {
+        var role = await _rolesService.GetRoleAsync(roleId);
+        return Ok((RoleDto) role);
+    }
+
     [HttpPost("")]
     public async Task<ActionResult<RoleDto>> CreateRoleAsync(RoleDto role)
     {

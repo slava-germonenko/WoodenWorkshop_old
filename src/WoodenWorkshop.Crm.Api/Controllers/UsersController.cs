@@ -14,7 +14,7 @@ using WoodenWorkshop.Crm.Api.Filters;
 
 namespace WoodenWorkshop.Crm.Api.Controllers;
 
-[ApiController, Authorize, RequirePermissions(Permissions.Admin), Route("api/[controller]")]
+[ApiController, Authorize, Route("api/[controller]")]
 public class UsersController : UserAwareController
 {
     private readonly IUserRolesService _userRolesService;
@@ -84,14 +84,14 @@ public class UsersController : UserAwareController
         return Ok(new UserRolesDto(roles));
     }
 
-    [HttpPost("")]
+    [HttpPost(""), RequirePermissions(Permissions.Admin)]
     public async Task<ActionResult<UserDto>> CreateUserAsync([FromBody] UserWithPasswordDto user)
     {
         var createdUser = await _usersListService.AddUserAsync((User) user);
         return Ok((UserDto) createdUser);
     }
 
-    [HttpPatch("")]
+    [HttpPatch(""), RequirePermissions(Permissions.Admin)]
     public async Task<ActionResult<UserDto>> UpdateProfileAsync(
         [FromBody] UserDto userDto
     )
@@ -108,7 +108,7 @@ public class UsersController : UserAwareController
         return Ok(userDto);
     }
 
-    [HttpPost("{userId:guid}/roles")]
+    [HttpPost("{userId:guid}/roles"), RequirePermissions(Permissions.Admin)]
     public async Task<NoContentResult> AddUserRoleAsync(
         [FromBody] UserRoleDto roleDto,
         [FromRoute] Guid userId
@@ -118,7 +118,7 @@ public class UsersController : UserAwareController
         return NoContent();
     }
 
-    [HttpDelete("{userId:guid}/roles/{roleId:guid}")]
+    [HttpDelete("{userId:guid}/roles/{roleId:guid}"), RequirePermissions(Permissions.Admin)]
     public async Task<NoContentResult> RemoveUserRoleAsync(Guid userId, Guid roleId)
     {
         await _userRolesService.UnassignRoleFromUserAsync(userId, roleId);
