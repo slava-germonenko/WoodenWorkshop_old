@@ -31,6 +31,10 @@ public class ExceptionHandlingMiddleware
         {
             await _next.Invoke(context);
         }
+        catch (BadHttpRequestException e)
+        {
+            await WriteResponse(context, HttpStatusCode.BadRequest, new BaseApiResponse(e.Message));
+        }
         catch (DuplicateException e)
         {
             await WriteResponse(context, HttpStatusCode.BadRequest, new BaseApiResponse(e.Message));
