@@ -3,8 +3,12 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using StackExchange.Redis;
 
+using WoodenWorkshop.Auth;
+using WoodenWorkshop.Auth.Jobs;
+using WoodenWorkshop.Auth.Jobs.Settings;
+using WoodenWorkshop.Auth.Services;
+using WoodenWorkshop.Auth.Services.Abstractions;
 using WoodenWorkshop.Core;
 using WoodenWorkshop.Core.Contacts.Services;
 using WoodenWorkshop.Core.Contacts.Services.Abstractions;
@@ -16,6 +20,7 @@ using WoodenWorkshop.Crm.Api.Middleware;
 using WoodenWorkshop.Crm.Api.Options;
 using WoodenWorkshop.Crm.Api.Services;
 using WoodenWorkshop.Crm.Api.Services.Abstractions;
+using WoodenWorkshop.Crm.Api.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,14 +48,25 @@ builder.Services.Configure<Security>(builder.Configuration.GetSection("Security"
 
 builder.Services.AddScoped<IContactsListService, ContactsListService>();
 builder.Services.AddScoped<IContactsService, ContactsService>();
+builder.Services.AddScoped<IExpireRefreshTokensSettings, ExpireRefreshTokensSettings>();
 builder.Services.AddScoped<IRolePermissionsService, RolePermissionsService>();
 builder.Services.AddScoped<IRolesListService, RolesListService>();
 builder.Services.AddScoped<IRolesService, RolesService>();
+builder.Services.AddScoped<ISessionsService, SessionsService>();
 builder.Services.AddScoped<IUserRolesService, UserRolesService>();
 builder.Services.AddScoped<IUsersListService, UsersListService>();
 builder.Services.AddScoped<IUsersService, UsersService>();
 builder.Services.AddScoped<IUserSessionService, UserSessionService>();
 builder.Services.AddScoped<ITokenService, JwtService>();
+
+var authConnectionString = builder.Configuration.GetValue<string>("Infrastructure:AuthSqlConnectionString");
+builder.Services.AddDbContext<AuthContext>(
+    options => options.UseSqlServer(authConnectionString),
+    optionsLifetime: ServiceLifetime.Singleton
+);
+builder.Services.AddDbContextFactory<AuthContext>(
+    options => options.UseSqlServer(authConnectionString)
+);
 
 var coreConnectionString = builder.Configuration.GetValue<string>("Infrastructure:CoreSqlConnectionString");
 builder.Services.AddDbContext<CoreContext>(
@@ -60,9 +76,8 @@ builder.Services.AddDbContext<CoreContext>(
 builder.Services.AddDbContextFactory<CoreContext>(
     options => options.UseSqlServer(coreConnectionString)
 );
-var redisConnectionString = builder.Configuration.GetValue<string>("Infrastructure:RedisConnectionString");
-var redisConnection = ConnectionMultiplexer.Connect(redisConnectionString);
-builder.Services.AddSingleton<IConnectionMultiplexer>(redisConnection);
+
+builder.Services.AddHostedService<ExpireRefreshTokenBackgroundService>();
 
 var app = builder.Build();
 

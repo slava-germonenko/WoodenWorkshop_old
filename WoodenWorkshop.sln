@@ -14,6 +14,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WoodenWorkshop.Core.Users",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WoodenWorkshop.Core.Roles", "src\WoodenWorkshop.Core.Roles\WoodenWorkshop.Core.Roles.csproj", "{77450EA8-3924-4357-A88C-4AF75AD4250A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WoodenWorkshop.Auth", "src\WoodenWorkshop.Auth\WoodenWorkshop.Auth.csproj", "{DB8FC63B-6F06-4A51-B45E-F8C069C8C34A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WoodenWorkshop.Auth.Jobs", "src\WoodenWorkshop.Auth.Jobs\WoodenWorkshop.Auth.Jobs.csproj", "{3998D3DE-9BE9-4AD3-9630-A042CD59E96D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -26,6 +30,8 @@ Global
 		{CA75B10E-F749-4393-8BF0-C49F2F582747} = {1DB02DCD-CE0B-434D-940B-C31425B55BD2}
 		{D0B74AE9-78C1-4AB0-A624-5BD7A4022371} = {1DB02DCD-CE0B-434D-940B-C31425B55BD2}
 		{77450EA8-3924-4357-A88C-4AF75AD4250A} = {1DB02DCD-CE0B-434D-940B-C31425B55BD2}
+		{DB8FC63B-6F06-4A51-B45E-F8C069C8C34A} = {1DB02DCD-CE0B-434D-940B-C31425B55BD2}
+		{3998D3DE-9BE9-4AD3-9630-A042CD59E96D} = {1DB02DCD-CE0B-434D-940B-C31425B55BD2}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{0F5648EB-37A7-4737-A1E9-2A9359362DC1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -52,5 +58,13 @@ Global
 		{77450EA8-3924-4357-A88C-4AF75AD4250A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{77450EA8-3924-4357-A88C-4AF75AD4250A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{77450EA8-3924-4357-A88C-4AF75AD4250A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DB8FC63B-6F06-4A51-B45E-F8C069C8C34A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB8FC63B-6F06-4A51-B45E-F8C069C8C34A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB8FC63B-6F06-4A51-B45E-F8C069C8C34A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB8FC63B-6F06-4A51-B45E-F8C069C8C34A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3998D3DE-9BE9-4AD3-9630-A042CD59E96D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3998D3DE-9BE9-4AD3-9630-A042CD59E96D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3998D3DE-9BE9-4AD3-9630-A042CD59E96D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3998D3DE-9BE9-4AD3-9630-A042CD59E96D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
