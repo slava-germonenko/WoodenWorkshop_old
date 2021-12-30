@@ -17,6 +17,6 @@ public class User : BaseModel
     public string PasswordHash { get; set; }
 
     public ICollection<Role> Roles { get; set; }
-    
+
     public ICollection<Contact> AssignedContacts { get; set; }
 }

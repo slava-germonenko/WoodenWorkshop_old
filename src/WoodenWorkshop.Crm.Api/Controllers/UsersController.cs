@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
+using WoodenWorkshop.Auth.Models;
+using WoodenWorkshop.Auth.Services.Abstractions;
 using WoodenWorkshop.Common.Exceptions;
 using WoodenWorkshop.Common.Models;
 using WoodenWorkshop.Common.Models.Paging;
@@ -23,16 +25,20 @@ public class UsersController : UserAwareController
     
     private readonly IUsersService _usersService;
 
+    private readonly IUserSessionService _userSessionService;
+
 
     public UsersController(
         IUserRolesService userRolesService,
         IUsersListService usersListService,
-        IUsersService usersService
+        IUsersService usersService,
+        IUserSessionService userSessionService
     )
     {
         _userRolesService = userRolesService;
         _usersListService = usersListService;
         _usersService = usersService;
+        _userSessionService = userSessionService;
     }
 
 
@@ -98,7 +104,7 @@ public class UsersController : UserAwareController
     {
         if (CurrentUserId != userDto.Id && CurrentUserPermissions.Contains(Permissions.Admin))
         {
-            throw new UnauthorizedException("Вы не может обновить чужой профиль.");
+            throw new UnauthorizedException("Вы не можете обновить чужой профиль.");
         }
 
         var user = await _usersService.GetUserDetailsAsync(userDto.Id);
@@ -123,5 +129,12 @@ public class UsersController : UserAwareController
     {
         await _userRolesService.UnassignRoleFromUserAsync(userId, roleId);
         return NoContent();
+    }
+
+    [HttpGet("{userId:guid}/sessions")]
+    public async Task<ActionResult<ICollection<Session>>> GetUserSessions(Guid userId)
+    {
+        var sessions = await _userSessionService.GetUserSessionsAsync(userId);
+        return Ok(new { Sessions = sessions });
     }
 }

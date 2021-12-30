@@ -2,8 +2,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
+using WoodenWorkshop.Auth.Models;
+using WoodenWorkshop.Auth.Services.Abstractions;
 using WoodenWorkshop.Core.Users.Services.Abstractions;
 using WoodenWorkshop.Crm.Api.Dtos;
+using WoodenWorkshop.Crm.Api.Extensions;
 using WoodenWorkshop.Crm.Api.Models;
 using WoodenWorkshop.Crm.Api.Models.Http;
 using WoodenWorkshop.Crm.Api.Options;
@@ -26,6 +29,8 @@ public class AuthorizationController : ControllerBase
 
     private string? ClientIpAddress => HttpContext.Connection.RemoteIpAddress?.ToString();
 
+    private int AccessTokenTtl => _securityOptions.Value.AccessTokenTtlSeconds;
+
 
     public AuthorizationController(
         IUserSessionService userSessionService,
@@ -47,31 +52,19 @@ public class AuthorizationController : ControllerBase
     )
     {
         var user = await _usersService.GetUserDetailsAsync(userCredential.Username, userCredential.Password);
-        var permissions = user.Roles
-            .SelectMany(r => r.Permissions)
-            .Select(p => p.Name)
-            .ToArray();
-        var accessToken = _tokenService.BuildAccessToken(user, permissions);
-        var refreshToken = _tokenService.BuildRefreshToken();
+        var (accessToken, refreshToken) = _tokenService.BuildAccessAndRefreshTokens(user);
 
-        await _userSessionService.SaveUserSession(
-            new(
-                refreshToken.Token,
-                user.Id,
-                ClientIpAddress ?? "UNKNOWN",
-                userCredential.DeviceName ?? "UNKNOWN"
-            )
-        );
-
+        await _userSessionService.SaveSessionAsync(new Session
+        {
+            DeviceName = userCredential.DeviceName,
+            ExpireDate = refreshToken.ExpireDate,
+            IpAddress = ClientIpAddress,
+            RefreshToken = refreshToken.Token,
+            UserId = user.Id,
+        });
         AddRefreshTokenCookie(refreshToken);
 
-        var authorizationResponse = new AuthorizationResponse(
-            accessToken.Token,
-            refreshToken.Token,
-            "bearer",
-            _securityOptions.Value.AccessTokenTtlSeconds
-        );
-
+        var authorizationResponse = new AuthorizationResponse(accessToken.Token, refreshToken.Token, AccessTokenTtl);
         return Ok(authorizationResponse);
     }
 
@@ -80,41 +73,20 @@ public class AuthorizationController : ControllerBase
         [FromBody] RefreshTokenDto refreshTokenDto
     )
     {
-        if (refreshTokenDto.RefreshToken is null && !Request.Cookies.ContainsKey(RefreshTokenCookieName))
+        var token = refreshTokenDto.RefreshToken ?? GetRefreshTokenFromCookies();
+        if (token is null)
         {
             throw new BadHttpRequestException("Токен не был найден ни в теле запроса, ни в кухах.");
         }
-        var session = await _userSessionService.GetUserSession(
-            refreshTokenDto.RefreshToken ?? Request.Cookies[RefreshTokenCookieName]
-        );
-        var user = await _usersService.GetUserDetailsAsync(session.UserId);
-        var permissions = user.Roles
-            .SelectMany(r => r.Permissions)
-            .Select(p => p.Name)
-            .ToArray();
-        var newAccessToken = _tokenService.BuildAccessToken(user, permissions);
-        var newRefreshToken = _tokenService.BuildRefreshToken();
 
-        await _userSessionService.ExpireUserSession(refreshTokenDto.RefreshToken);
-        await _userSessionService.SaveUserSession(
-            new(
-                newRefreshToken.Token,
-                user.Id,
-                session.IpAddress,
-                session.DeviceName
-            )
-        );
+        var newRefreshToken = _tokenService.BuildRefreshToken();
+        var session = await _userSessionService.RefreshSessionAsync(token, newRefreshToken.Token);
+        var user = await _usersService.GetUserDetailsAsync(session.UserId);
+        var (accessToken, _) = _tokenService.BuildAccessAndRefreshTokens(user);
 
         AddRefreshTokenCookie(newRefreshToken);
 
-
-        var authorizationResponse = new AuthorizationResponse(
-            newAccessToken.Token,
-            newRefreshToken.Token,
-            "bearer",
-            _securityOptions.Value.AccessTokenTtlSeconds
-        );
-
+        var authorizationResponse = new AuthorizationResponse(accessToken.Token, newRefreshToken.Token, AccessTokenTtl);
         return Ok(authorizationResponse);
     }
 
@@ -123,14 +95,13 @@ public class AuthorizationController : ControllerBase
         [FromBody] RefreshTokenDto refreshTokenDto
     )
     {
-        if (refreshTokenDto.RefreshToken is null && !Request.Cookies.ContainsKey(RefreshTokenCookieName))
+        var token = refreshTokenDto.RefreshToken ?? GetRefreshTokenFromCookies();
+        if (token is null)
         {
             throw new BadHttpRequestException("Токен не был найден ни в теле запроса, ни в кухах.");
         }
 
-        await _userSessionService.ExpireUserSession(
-            refreshTokenDto.RefreshToken ?? Request.Cookies[RefreshTokenCookieName]
-        );
+        await _userSessionService.ExpireSessionAsync(token);
 
         return NoContent();
     }
@@ -148,4 +119,6 @@ public class AuthorizationController : ControllerBase
             }
         );
     }
+
+    private string? GetRefreshTokenFromCookies() => Request.Cookies[RefreshTokenCookieName];
 }
