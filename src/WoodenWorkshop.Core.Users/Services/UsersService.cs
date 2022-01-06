@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using WoodenWorkshop.Common.Exceptions;
 using WoodenWorkshop.Common.Hashing;
 using WoodenWorkshop.Core.Models;
+using WoodenWorkshop.Core.Users.Extensions;
 using WoodenWorkshop.Core.Users.Services.Abstractions;
 
 namespace WoodenWorkshop.Core.Users.Services;
@@ -61,8 +62,8 @@ public class UsersService : IUsersService
 
     public async Task<User> UpdateUserDetailsAsync(User user)
     {
-        var userExists = await _context.Users.AnyAsync(u => u.Id == user.Id);
-        if (!userExists)
+        var userToUpdate = await _context.Users.FirstOrDefaultAsync(u => u.Id == user.Id);
+        if (userToUpdate is null)
         {
             throw new NotFoundException($"Пользователь с индентификатором {user.Id} не найден.");
         }
@@ -75,7 +76,8 @@ public class UsersService : IUsersService
             throw new DuplicateException($"Пользователь с почтой {user.EmailAddress} уже существует.");
         }
 
-        _context.Users.Update(user);
+        userToUpdate.CopyDetails(user);
+        _context.Users.Update(userToUpdate);
         await _context.SaveChangesAsync();
         return user;
     }

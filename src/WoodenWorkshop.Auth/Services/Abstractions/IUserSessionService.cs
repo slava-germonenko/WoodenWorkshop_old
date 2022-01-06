@@ -5,8 +5,12 @@ namespace WoodenWorkshop.Auth.Services.Abstractions;
 public interface IUserSessionService
 {
     Task ExpireSessionAsync(string refreshToken);
+    
+    Task ExpireSessionAsync(Guid id);
 
     Task<Session?> GetSessionAsync(string refreshToken);
+
+    Task<Session> GetSessionAsync(Guid id);
 
     Task<IReadOnlyCollection<Session>> GetUserSessionsAsync(Guid userId);
 

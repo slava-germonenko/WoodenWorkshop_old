@@ -106,6 +106,26 @@ public class AuthorizationController : ControllerBase
         return NoContent();
     }
 
+    [HttpGet("sessions/current")]
+    public async Task<ActionResult<Session>> GetCurrentSession()
+    {
+        var refreshToken = GetRefreshTokenFromCookies();
+        if (refreshToken is null)
+        {
+            throw new BadHttpRequestException("Токен не был найден.");
+        }
+
+        var session = await _userSessionService.GetSessionAsync(refreshToken);
+        return Ok(session);
+    }
+
+    [HttpDelete("sessions/{sessionId:guid}")]
+    public async Task<NoContentResult> RemoveSessionAsync(Guid sessionId)
+    {
+        await _userSessionService.ExpireSessionAsync(sessionId);
+        return NoContent();
+    }
+
     private void AddRefreshTokenCookie(TokenInfo tokenInfo)
     {
         Response.Cookies.Append(

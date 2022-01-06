@@ -27,10 +27,32 @@ public class UserSessionService : IUserSessionService
         }
     }
 
+    public async Task ExpireSessionAsync(Guid id)
+    {
+        var session = await _authContext.Sessions.FindAsync(id);
+        if (session is not null)
+        {
+            _authContext.Sessions.Remove(session);
+            await _authContext.SaveChangesAsync();
+        }
+    }
+
     public async Task<Session?> GetSessionAsync(string refreshToken)
     {
         return await _authContext.Sessions.FirstOrDefaultAsync(s => s.RefreshToken == refreshToken);
     }
+
+    public async Task<Session> GetSessionAsync(Guid id)
+    {
+        var session = await _authContext.Sessions.FindAsync(id);
+        if (session is null)
+        {
+            throw new NotFoundException("");
+        }
+
+        return session;
+    }
+
 
     public async Task<IReadOnlyCollection<Session>> GetUserSessionsAsync(Guid userId)
     {
