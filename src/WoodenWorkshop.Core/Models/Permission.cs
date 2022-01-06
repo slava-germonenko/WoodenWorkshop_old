@@ -9,6 +9,4 @@ public class Permission : BaseModel
 
     [ConstantsRange(typeof(Permissions))]
     public string Name { get; set; }
-
-    public Role Role { get; set; }
 }
