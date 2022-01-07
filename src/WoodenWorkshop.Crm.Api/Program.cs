@@ -21,6 +21,7 @@ using WoodenWorkshop.Crm.Api.Options;
 using WoodenWorkshop.Crm.Api.Services;
 using WoodenWorkshop.Crm.Api.Services.Abstractions;
 using WoodenWorkshop.Crm.Api.Settings;
+using WoodenWorkshop.Infrastructure.Blobs.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -76,7 +77,8 @@ builder.Services.AddDbContext<CoreContext>(
 builder.Services.AddDbContextFactory<CoreContext>(
     options => options.UseSqlServer(coreConnectionString)
 );
-
+var blobStorageConnectionString = builder.Configuration.GetValue<string>("Infrastructure:BlobStorageConnectionString");
+builder.Services.AddBlobServiceFactory(blobStorageConnectionString);
 builder.Services.AddHostedService<ExpireRefreshTokenBackgroundService>();
 
 var app = builder.Build();
