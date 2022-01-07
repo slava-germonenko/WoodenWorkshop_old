@@ -23,8 +23,6 @@ public class UsersService : IUsersService
     {
         var user = await _context.Users
             .AsNoTracking()
-            .Include(u => u.Roles)
-            .ThenInclude(r => r.Permissions)
             .FirstOrDefaultAsync(u => u.Id == id);
         if (user is null)
         {
@@ -38,8 +36,6 @@ public class UsersService : IUsersService
     {
         var user = await _context.Users
             .AsNoTracking()
-            .Include(u => u.Roles)
-            .ThenInclude(r => r.Permissions)
             .FirstOrDefaultAsync(u => u.EmailAddress == emailAddress);
         if (user is null)
         {

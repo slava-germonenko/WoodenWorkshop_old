@@ -15,6 +15,4 @@ public class User : BaseModel
 
     [Required, StringLength(400)]
     public string PasswordHash { get; set; }
-
-    public ICollection<Role> Roles { get; set; }
 }

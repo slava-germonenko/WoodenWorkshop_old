@@ -5,12 +5,12 @@ using WoodenWorkshop.Auth.Services.Abstractions;
 
 namespace WoodenWorkshop.Auth.Services;
 
-public class SessionsService : ISessionsService
+public class SessionsExpirationService : ISessionsExpirationService
 {
     private readonly AuthContext _context;
 
 
-    public SessionsService(AuthContext context)
+    public SessionsExpirationService(AuthContext context)
     {
         _context = context;
     }

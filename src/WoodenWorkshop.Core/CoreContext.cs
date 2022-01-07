@@ -39,7 +39,6 @@ public class CoreContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        modelBuilder.ApplyConfiguration(new UserEntityConfiguration());
         modelBuilder.ApplyConfiguration(new ProductEntityConfiguration());
     }
 

@@ -52,7 +52,7 @@ builder.Services.AddScoped<IExpireRefreshTokensSettings, ExpireRefreshTokensSett
 builder.Services.AddScoped<IRolePermissionsService, RolePermissionsService>();
 builder.Services.AddScoped<IRolesListService, RolesListService>();
 builder.Services.AddScoped<IRolesService, RolesService>();
-builder.Services.AddScoped<ISessionsService, SessionsService>();
+builder.Services.AddScoped<ISessionsExpirationService, SessionsExpirationService>();
 builder.Services.AddScoped<IUserRolesService, UserRolesService>();
 builder.Services.AddScoped<IUsersListService, UsersListService>();
 builder.Services.AddScoped<IUsersService, UsersService>();

@@ -45,7 +45,6 @@ public class RolesListService : IRolesListService
 
         var roles = await rolesQuery
             .Page(page)
-            .Include(r => r.Users)
             .ToListAsync();
         var rolesCount = await rolesQuery.CountAsync();
         return new(page, roles, rolesCount);
@@ -73,7 +72,6 @@ public class RolesListService : IRolesListService
         return orderByQuery.OrderBy?.ToLower() switch
         {
             "name" => role => role.Name,
-            "assigneescount" => role => role.Users.Count,
             _ => role => role.Created,
         };
     }
