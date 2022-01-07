@@ -32,7 +32,7 @@ public class ExpireRefreshTokenBackgroundService : BackgroundService
     private async Task ExpireTokens()
     {
         using var scope = _serviceScopeFactory.CreateScope();
-        var sessionsService = scope.ServiceProvider.GetService<ISessionsService>();
+        var sessionsService = scope.ServiceProvider.GetService<ISessionsExpirationService>();
         var settings = scope.ServiceProvider.GetService<IExpireRefreshTokensSettings>();
         if (sessionsService is null || settings is null)
         {

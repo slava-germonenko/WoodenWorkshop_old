@@ -12,6 +12,8 @@ public interface IUserSessionService
 
     Task<Session> GetSessionAsync(Guid id);
 
+    Task<Session?> GetSessionAsync(Guid userId, string? deviceName, string? ipAddress);
+
     Task<IReadOnlyCollection<Session>> GetUserSessionsAsync(Guid userId);
 
     Task<Session> RefreshSessionAsync(string refreshToken, string newRefreshToken);

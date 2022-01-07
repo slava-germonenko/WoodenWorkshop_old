@@ -53,6 +53,12 @@ public class UserSessionService : IUserSessionService
         return session;
     }
 
+    public async Task<Session?> GetSessionAsync(Guid userId, string? deviceName, string? ipAddress)
+    {
+        return await _authContext.Sessions.FirstOrDefaultAsync(
+            session => session.UserId == userId && session.DeviceName == deviceName && session.IpAddress == ipAddress
+        );
+    }
 
     public async Task<IReadOnlyCollection<Session>> GetUserSessionsAsync(Guid userId)
     {

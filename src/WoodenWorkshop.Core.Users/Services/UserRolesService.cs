@@ -31,47 +31,43 @@ public class UserRolesService : IUserRolesService
 
     public async Task AssignRoleToUserAsync(Guid userId, Guid roleId)
     {
-        var user = await _context.Users.AsNoTracking()
-            .WithRoles()
-            .FirstOrDefaultAsync(u => u.Id == userId);
-
-        if (user is null)
+        var userExists = await _context.Users.AnyAsync(u => u.Id == userId);
+        if (!userExists)
         {
-            throw new NotFoundException($"Пользователь с идентификатором {userId} не найден.");
+            throw new NotFoundException($"Пользователь с индентификатором {userId} не найден.");
         }
 
-        if (user.Roles.Any(r => r.Id == roleId))
+        var roleExists = await _context.Roles.AnyAsync(r => r.Id == roleId);
+        if (!roleExists)
         {
-            return;
-        }
-
-        var role = await _context.Roles.FindAsync(roleId);
-        if (role is null)
-        {
-            throw new NotFoundException($"Роль с идентификатором {userId} не найдена.");
+            throw new NotFoundException($"Роль с идентификатором {roleId} не найдена.");
         }
         
-        user.Roles.Add(role);
-        _context.Users.Update(user);
+        var userRole = await _context.UserRoles.FirstOrDefaultAsync(
+            ur => ur.UserId == userId && ur.RoleId == roleId
+        );
+        if (userRole is not null)
+        {
+            return;   
+        }
+        
+        userRole = new UserRole
+        {
+            UserId = userId,
+            RoleId = roleId,
+        };
+        await _context.UserRoles.AddAsync(userRole);
         await _context.SaveChangesAsync();
     }
 
     public async Task UnassignRoleFromUserAsync(Guid userId, Guid roleId)
     {
-        var user = await _context.Users.AsNoTracking()
-            .WithRoles()
-            .FirstOrDefaultAsync(u => u.Id == userId);
-
-        if (user is null)
+        var userRole = await _context.UserRoles.FirstOrDefaultAsync(
+            ur => ur.UserId == userId && ur.RoleId == roleId
+        );
+        if (userRole is not null)
         {
-            throw new NotFoundException($"Пользователь с идентификатором {userId} не найден.");
-        }
-
-        var role = user.Roles.FirstOrDefault(r => r.Id == roleId);
-        if (role is not null)
-        {
-            user.Roles.Remove(role);
-            _context.Update(user);
+            _context.UserRoles.Remove(userRole);
             await _context.SaveChangesAsync();
         }
     }
