@@ -18,6 +18,7 @@
     <ItemGroup>
       <ProjectReference Include="..\WoodenWorkshop.Auth.Jobs\WoodenWorkshop.Auth.Jobs.csproj" />
       <ProjectReference Include="..\WoodenWorkshop.Auth\WoodenWorkshop.Auth.csproj" />
+      <ProjectReference Include="..\WoodenWorkshop.Core.Assets\WoodenWorkshop.Core.Assets.csproj" />
       <ProjectReference Include="..\WoodenWorkshop.Core.Contacts\WoodenWorkshop.Core.Contacts.csproj" />
       <ProjectReference Include="..\WoodenWorkshop.Core.Roles\WoodenWorkshop.Core.Roles.csproj" />
       <ProjectReference Include="..\WoodenWorkshop.Core.Users\WoodenWorkshop.Core.Users.csproj" />

@@ -8,6 +8,7 @@ namespace WoodenWorkshop.Core;
 public class CoreContext : DbContext
 {
     public DbSet<Asset> Assets { get; set; }
+    public DbSet<AssetFolder> AssetFolders { get; set; }
     public DbSet<Contact> Contacts { get; set; }
     public DbSet<Permission> Permissions { get; set; }
     public DbSet<Product> Products { get; set; }
@@ -21,34 +22,41 @@ public class CoreContext : DbContext
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new())
     {
-        UpdateUpdatedDate();
+        SetUpdatedDateAndDiscardCreatedDateChanges();
         return base.SaveChangesAsync(cancellationToken);
     }
 
     public override int SaveChanges()
     {
-        UpdateUpdatedDate();
+        SetUpdatedDateAndDiscardCreatedDateChanges();
         return base.SaveChanges();
     }
 
     public override int SaveChanges(bool acceptAllChangesOnSuccess)
     {
-        UpdateUpdatedDate();
+        SetUpdatedDateAndDiscardCreatedDateChanges();
         return base.SaveChanges(acceptAllChangesOnSuccess);
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+        modelBuilder.ApplyConfiguration(new AssetEntityConfiguration());
         modelBuilder.ApplyConfiguration(new ProductEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new UserRoleEntityConfiguration());
     }
 
-    private void UpdateUpdatedDate()
+    private void SetUpdatedDateAndDiscardCreatedDateChanges()
     {
-        var updatedDate = DateTime.UtcNow;
+        var commitDate = DateTime.UtcNow;
         foreach (var entry in ChangeTracker.Entries<BaseModel>().Where(e => e.State == EntityState.Modified))
         {
-            entry.Entity.Updated = updatedDate;
+            entry.Property(entity => entity.Created).IsModified = false;
+            entry.Entity.Updated = commitDate;
+        }
+        foreach (var entry in ChangeTracker.Entries<BaseModel>().Where(e => e.State == EntityState.Added))
+        {
+            entry.Entity.Created = commitDate;
         }
     }
 }
