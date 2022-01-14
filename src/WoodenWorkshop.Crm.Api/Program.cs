@@ -10,6 +10,8 @@ using WoodenWorkshop.Auth.Jobs.Settings;
 using WoodenWorkshop.Auth.Services;
 using WoodenWorkshop.Auth.Services.Abstractions;
 using WoodenWorkshop.Core;
+using WoodenWorkshop.Core.Assets.Services;
+using WoodenWorkshop.Core.Assets.Services.Abstractions;
 using WoodenWorkshop.Core.Contacts.Services;
 using WoodenWorkshop.Core.Contacts.Services.Abstractions;
 using WoodenWorkshop.Core.Roles.Services;
@@ -47,9 +49,16 @@ builder.Services
 builder.Services.Configure<Infrastructure>(builder.Configuration.GetSection("Infrastructure"));
 builder.Services.Configure<Security>(builder.Configuration.GetSection("Security"));
 
+// Services
+builder.Services.AddScoped<IAssetsBlobClientFactory, AssetsBlobClientFactory>();
+builder.Services.AddScoped<IAssetsListService, AssetsListService>();
+builder.Services.AddScoped<IAssetsService, AssetsService>();
+builder.Services.AddScoped<IAuthorizationService, AuthorizationService>();
 builder.Services.AddScoped<IContactsListService, ContactsListService>();
 builder.Services.AddScoped<IContactsService, ContactsService>();
 builder.Services.AddScoped<IExpireRefreshTokensSettings, ExpireRefreshTokensSettings>();
+builder.Services.AddScoped<IFolderListService, FolderListService>();
+builder.Services.AddScoped<IFoldersService, FoldersService>();
 builder.Services.AddScoped<IRolePermissionsService, RolePermissionsService>();
 builder.Services.AddScoped<IRolesListService, RolesListService>();
 builder.Services.AddScoped<IRolesService, RolesService>();
@@ -60,6 +69,7 @@ builder.Services.AddScoped<IUsersService, UsersService>();
 builder.Services.AddScoped<IUserSessionService, UserSessionService>();
 builder.Services.AddScoped<ITokenService, JwtService>();
 
+// Infrastructure
 var authConnectionString = builder.Configuration.GetValue<string>("Infrastructure:AuthSqlConnectionString");
 builder.Services.AddDbContext<AuthContext>(
     options => options.UseSqlServer(authConnectionString),
@@ -79,8 +89,11 @@ builder.Services.AddDbContextFactory<CoreContext>(
 );
 var blobStorageConnectionString = builder.Configuration.GetValue<string>("Infrastructure:BlobStorageConnectionString");
 builder.Services.AddBlobServiceFactory(blobStorageConnectionString);
+
+// Hosted services
 builder.Services.AddHostedService<ExpireRefreshTokenBackgroundService>();
 
+// Middleware
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())

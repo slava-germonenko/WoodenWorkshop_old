@@ -32,6 +32,10 @@ public class RequirePermissionsAttribute : Attribute, IAuthorizationFilter
         }
         
         var permissions = context.HttpContext.GetCurrentUserPermissions();
+        if (permissions.Any(p => p == Permissions.Admin))
+        {
+            return;
+        }
 
         var hasAllRequirePermissions = _permissionResolutionStrategies switch
         {
