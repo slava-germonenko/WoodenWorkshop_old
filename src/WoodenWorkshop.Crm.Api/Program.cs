@@ -26,6 +26,11 @@ using WoodenWorkshop.Crm.Api.Settings;
 using WoodenWorkshop.Infrastructure.Blobs.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
+var azureAppConfigurationConnectionString = Environment.GetEnvironmentVariable("Infrastructure:AppConfigurationConnectionString");
+if (!string.IsNullOrEmpty(azureAppConfigurationConnectionString))
+{
+    builder.Configuration.AddAzureAppConfiguration(azureAppConfigurationConnectionString);
+}
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
