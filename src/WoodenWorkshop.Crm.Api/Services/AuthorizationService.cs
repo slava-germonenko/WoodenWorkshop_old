@@ -61,6 +61,7 @@ public class AuthorizationService : IAuthorizationService
         var (newAccessTokenInfo, newRefreshTokenInfo) = await BuildAccessAndRefreshTokensAsync(user);
         session.RefreshToken = newRefreshTokenInfo.Token;
         session.ExpireDate = newRefreshTokenInfo.ExpireDate;
+        await _userSessionService.SaveSessionAsync(session);
 
         return new AuthorizationResult(newAccessTokenInfo, newRefreshTokenInfo, session);
     }

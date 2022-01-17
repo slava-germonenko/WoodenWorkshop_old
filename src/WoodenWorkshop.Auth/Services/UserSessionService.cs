@@ -83,7 +83,7 @@ public class UserSessionService : IUserSessionService
 
     public async Task SaveSessionAsync(Session session)
     {
-        await _authContext.Sessions.AddAsync(session);
+        _authContext.Sessions.Update(session);
         await _authContext.SaveChangesAsync();
     }
 }
