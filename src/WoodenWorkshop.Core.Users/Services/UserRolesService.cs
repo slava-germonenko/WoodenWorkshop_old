@@ -2,7 +2,6 @@
 
 using WoodenWorkshop.Common.Exceptions;
 using WoodenWorkshop.Core.Models;
-using WoodenWorkshop.Core.Users.Extensions;
 using WoodenWorkshop.Core.Users.Services.Abstractions;
 
 namespace WoodenWorkshop.Core.Users.Services;

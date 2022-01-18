@@ -14,6 +14,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\WoodenWorkshop.Common\WoodenWorkshop.Common.csproj" />
+      <ProjectReference Include="..\WoodenWorkshop.Infrastructure.HostedServices\WoodenWorkshop.Infrastructure.HostedServices.csproj" />
     </ItemGroup>
 
 </Project>

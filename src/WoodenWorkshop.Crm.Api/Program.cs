@@ -5,13 +5,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 using WoodenWorkshop.Auth;
-using WoodenWorkshop.Auth.Jobs;
-using WoodenWorkshop.Auth.Jobs.Settings;
+using WoodenWorkshop.Auth.HostedServices;
+using WoodenWorkshop.Auth.HostedServices.Settings;
 using WoodenWorkshop.Auth.Services;
 using WoodenWorkshop.Auth.Services.Abstractions;
 using WoodenWorkshop.Core;
-using WoodenWorkshop.Core.Assets.Services;
-using WoodenWorkshop.Core.Assets.Services.Abstractions;
 using WoodenWorkshop.Core.Contacts.Services;
 using WoodenWorkshop.Core.Contacts.Services.Abstractions;
 using WoodenWorkshop.Core.Roles.Services;
@@ -24,6 +22,7 @@ using WoodenWorkshop.Crm.Api.Services;
 using WoodenWorkshop.Crm.Api.Services.Abstractions;
 using WoodenWorkshop.Crm.Api.Settings;
 using WoodenWorkshop.Infrastructure.Blobs.DependencyInjection;
+using WoodenWorkshop.Infrastructure.HostedServices.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 var azureAppConfigurationConnectionString = Environment.GetEnvironmentVariable("Infrastructure:AppConfigurationConnectionString");
@@ -55,19 +54,12 @@ builder.Services.Configure<Infrastructure>(builder.Configuration.GetSection("Inf
 builder.Services.Configure<Security>(builder.Configuration.GetSection("Security"));
 
 // Services
-builder.Services.AddScoped<IAssetsBlobClientFactory, AssetsBlobClientFactory>();
-builder.Services.AddScoped<IAssetsListService, AssetsListService>();
-builder.Services.AddScoped<IAssetsService, AssetsService>();
 builder.Services.AddScoped<IAuthorizationService, AuthorizationService>();
 builder.Services.AddScoped<IContactsListService, ContactsListService>();
 builder.Services.AddScoped<IContactsService, ContactsService>();
-builder.Services.AddScoped<IExpireRefreshTokensSettings, ExpireRefreshTokensSettings>();
-builder.Services.AddScoped<IFolderListService, FolderListService>();
-builder.Services.AddScoped<IFoldersService, FoldersService>();
 builder.Services.AddScoped<IRolePermissionsService, RolePermissionsService>();
 builder.Services.AddScoped<IRolesListService, RolesListService>();
 builder.Services.AddScoped<IRolesService, RolesService>();
-builder.Services.AddScoped<ISessionsExpirationService, SessionsExpirationService>();
 builder.Services.AddScoped<IUserRolesService, UserRolesService>();
 builder.Services.AddScoped<IUsersListService, UsersListService>();
 builder.Services.AddScoped<IUsersService, UsersService>();
@@ -96,7 +88,9 @@ var blobStorageConnectionString = builder.Configuration.GetValue<string>("Infras
 builder.Services.AddBlobServiceFactory(blobStorageConnectionString);
 
 // Hosted services
-builder.Services.AddHostedService<ExpireRefreshTokenBackgroundService>();
+var refreshTokenSleepTime = builder.Configuration.GetValue<int>("Infrastructure:ExpireRefreshTokenIntervalMinutes");
+builder.Services.AddScoped<IExpireTokenServiceSettings, ExpireTokenServiceSettings>();
+builder.Services.AddScopedTimedHostedService<ExpireSessionsHostedService>(TimeSpan.FromMinutes(refreshTokenSleepTime));
 
 // Middleware
 var app = builder.Build();

@@ -16,11 +16,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WoodenWorkshop.Core.Roles",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WoodenWorkshop.Auth", "src\WoodenWorkshop.Auth\WoodenWorkshop.Auth.csproj", "{DB8FC63B-6F06-4A51-B45E-F8C069C8C34A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WoodenWorkshop.Auth.Jobs", "src\WoodenWorkshop.Auth.Jobs\WoodenWorkshop.Auth.Jobs.csproj", "{3998D3DE-9BE9-4AD3-9630-A042CD59E96D}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WoodenWorkshop.Core.Assets", "src\WoodenWorkshop.Core.Assets\WoodenWorkshop.Core.Assets.csproj", "{CA30822E-5E21-4B3A-AA8E-93EC9891A728}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WoodenWorkshop.Infrastructure.Blobs", "src\WoodenWorkshop.Infrastructure.Blobs\WoodenWorkshop.Infrastructure.Blobs.csproj", "{DF0454F6-3739-46B7-BB0C-E50FFEB8EA4A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WoodenWorkshop.Infrastructure.HostedServices", "src\WoodenWorkshop.Infrastructure.HostedServices\WoodenWorkshop.Infrastructure.HostedServices.csproj", "{215DAD11-37C5-4F2B-9EB3-966DAC10E233}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,9 +33,8 @@ Global
 		{D0B74AE9-78C1-4AB0-A624-5BD7A4022371} = {1DB02DCD-CE0B-434D-940B-C31425B55BD2}
 		{77450EA8-3924-4357-A88C-4AF75AD4250A} = {1DB02DCD-CE0B-434D-940B-C31425B55BD2}
 		{DB8FC63B-6F06-4A51-B45E-F8C069C8C34A} = {1DB02DCD-CE0B-434D-940B-C31425B55BD2}
-		{3998D3DE-9BE9-4AD3-9630-A042CD59E96D} = {1DB02DCD-CE0B-434D-940B-C31425B55BD2}
-		{CA30822E-5E21-4B3A-AA8E-93EC9891A728} = {1DB02DCD-CE0B-434D-940B-C31425B55BD2}
 		{DF0454F6-3739-46B7-BB0C-E50FFEB8EA4A} = {1DB02DCD-CE0B-434D-940B-C31425B55BD2}
+		{215DAD11-37C5-4F2B-9EB3-966DAC10E233} = {1DB02DCD-CE0B-434D-940B-C31425B55BD2}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{0F5648EB-37A7-4737-A1E9-2A9359362DC1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -68,17 +65,13 @@ Global
 		{DB8FC63B-6F06-4A51-B45E-F8C069C8C34A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DB8FC63B-6F06-4A51-B45E-F8C069C8C34A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DB8FC63B-6F06-4A51-B45E-F8C069C8C34A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3998D3DE-9BE9-4AD3-9630-A042CD59E96D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3998D3DE-9BE9-4AD3-9630-A042CD59E96D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3998D3DE-9BE9-4AD3-9630-A042CD59E96D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3998D3DE-9BE9-4AD3-9630-A042CD59E96D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CA30822E-5E21-4B3A-AA8E-93EC9891A728}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CA30822E-5E21-4B3A-AA8E-93EC9891A728}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CA30822E-5E21-4B3A-AA8E-93EC9891A728}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CA30822E-5E21-4B3A-AA8E-93EC9891A728}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DF0454F6-3739-46B7-BB0C-E50FFEB8EA4A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DF0454F6-3739-46B7-BB0C-E50FFEB8EA4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DF0454F6-3739-46B7-BB0C-E50FFEB8EA4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DF0454F6-3739-46B7-BB0C-E50FFEB8EA4A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{215DAD11-37C5-4F2B-9EB3-966DAC10E233}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{215DAD11-37C5-4F2B-9EB3-966DAC10E233}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{215DAD11-37C5-4F2B-9EB3-966DAC10E233}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{215DAD11-37C5-4F2B-9EB3-966DAC10E233}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
