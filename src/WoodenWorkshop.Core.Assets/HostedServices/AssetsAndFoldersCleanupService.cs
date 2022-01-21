@@ -39,6 +39,7 @@ public class AssetsAndFoldersCleanupService : IScopedHostedService
     public async Task ExecuteAsync(CancellationToken cancellationToken)
     {
         await RemoveFolderContentQueuedForRemoval(null);
+        await RemoveAssets(null);
     }
 
     public async Task RemoveFolderContentQueuedForRemoval(Guid? folderId)
@@ -54,7 +55,6 @@ public class AssetsAndFoldersCleanupService : IScopedHostedService
             childFolders = await _foldersService.GetFoldersAsync(DefaultPage, folderId);
         }
 
-        await RemoveAssets(folderId);
         if (folderId.HasValue)
         {
             await _foldersService.RemoveFolder(folderId.Value, true);
@@ -64,14 +64,9 @@ public class AssetsAndFoldersCleanupService : IScopedHostedService
     private async Task RemoveAssets(Guid? folderId)
     {
         var assets = await _assetsCleanupService.GetAssetsQueuedForRemovalAsync(DefaultPage, folderId);
-        while (assets.Total > 0)
+        foreach (var asset in assets.Items)
         {
-            foreach (var assetsItem in assets.Items)
-            {
-                await _assetsService.RemoveAssetAsync(assetsItem.Id);
-            }
-
-            assets = await _assetsCleanupService.GetAssetsQueuedForRemovalAsync(DefaultPage, folderId);
+            await _assetsService.RemoveAssetAsync(asset.Id);
         }
     }
 }

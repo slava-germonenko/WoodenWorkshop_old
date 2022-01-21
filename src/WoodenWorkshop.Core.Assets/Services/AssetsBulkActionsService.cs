@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 using WoodenWorkshop.Core.Assets.Dtos;
@@ -33,8 +34,14 @@ public class AssetsBulkActionsService : IAssetsBulkActionsService
 
     public async Task QueueForRemovalAsync(IEnumerable<Guid> assetIds)
     {
-        var assetsQuery = _context.Assets.Where(asset => assetIds.Contains(asset.Id));
-        _context.Assets.RemoveRange(assetsQuery);
+        var assetsQuery = await _context.Assets
+            .Where(asset => assetIds.Contains(asset.Id))
+            .ToListAsync();
+        assetsQuery.ForEach(asset =>
+        {
+            asset.FolderId = null;
+            asset.QueuedForRemoval = true;
+        });
         await _context.SaveChangesAsync();
     }
 

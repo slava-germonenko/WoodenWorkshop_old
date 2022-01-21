@@ -111,6 +111,7 @@ public class AssetsService : IAssetsService
         if (asset is not null)
         {
             asset.QueuedForRemoval = true;
+            asset.FolderId = null;
             _context.Assets.Update(asset);
             await _context.SaveChangesAsync();
         }
