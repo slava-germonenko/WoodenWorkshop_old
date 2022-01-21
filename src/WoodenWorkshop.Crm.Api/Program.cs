@@ -29,7 +29,9 @@ using WoodenWorkshop.Infrastructure.Blobs.DependencyInjection;
 using WoodenWorkshop.Infrastructure.HostedServices.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
-var azureAppConfigurationConnectionString = Environment.GetEnvironmentVariable("Infrastructure:AppConfigurationConnectionString");
+var azureAppConfigurationConnectionString = builder.Configuration.GetValue<string>(
+    "Infrastructure:AppConfigurationConnectionString"
+);
 if (!string.IsNullOrEmpty(azureAppConfigurationConnectionString))
 {
     builder.Configuration.AddAzureAppConfiguration(azureAppConfigurationConnectionString);
