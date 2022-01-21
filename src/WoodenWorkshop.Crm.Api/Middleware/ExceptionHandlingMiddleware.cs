@@ -39,6 +39,10 @@ public class ExceptionHandlingMiddleware
         {
             await WriteResponse(context, HttpStatusCode.BadRequest, new BaseApiResponse(e.Message));
         }
+        catch (ValidationException e)
+        {
+            await WriteResponse(context, HttpStatusCode.BadRequest, new BaseApiResponse(e.Message));
+        }
         catch (NotFoundException e)
         {
             await WriteResponse(context, HttpStatusCode.NotFound, new BaseApiResponse(e.Message));

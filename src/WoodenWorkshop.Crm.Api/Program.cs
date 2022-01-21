@@ -10,6 +10,10 @@ using WoodenWorkshop.Auth.HostedServices.Settings;
 using WoodenWorkshop.Auth.Services;
 using WoodenWorkshop.Auth.Services.Abstractions;
 using WoodenWorkshop.Core;
+using WoodenWorkshop.Core.Assets.HostedServices;
+using WoodenWorkshop.Core.Assets.HostedServices.Settings;
+using WoodenWorkshop.Core.Assets.Services;
+using WoodenWorkshop.Core.Assets.Services.Abstractions;
 using WoodenWorkshop.Core.Contacts.Services;
 using WoodenWorkshop.Core.Contacts.Services.Abstractions;
 using WoodenWorkshop.Core.Roles.Services;
@@ -54,9 +58,15 @@ builder.Services.Configure<Infrastructure>(builder.Configuration.GetSection("Inf
 builder.Services.Configure<Security>(builder.Configuration.GetSection("Security"));
 
 // Services
+builder.Services.AddScoped<IAssetsBulkActionsService, AssetsBulkActionsService>();
+builder.Services.AddScoped<IAssetsCleanupService, AssetsCleanupService>();
+builder.Services.AddScoped<IAssetsService, AssetsService>();
 builder.Services.AddScoped<IAuthorizationService, AuthorizationService>();
 builder.Services.AddScoped<IContactsListService, ContactsListService>();
 builder.Services.AddScoped<IContactsService, ContactsService>();
+builder.Services.AddScoped<IFoldersBulkActionsService, FoldersBulkActionsService>();
+builder.Services.AddScoped<IFoldersCleanupService, FoldersCleanupService>();
+builder.Services.AddScoped<IFoldersService, FoldersService>();
 builder.Services.AddScoped<IRolePermissionsService, RolePermissionsService>();
 builder.Services.AddScoped<IRolesListService, RolesListService>();
 builder.Services.AddScoped<IRolesService, RolesService>();
@@ -91,6 +101,9 @@ builder.Services.AddBlobServiceFactory(blobStorageConnectionString);
 var refreshTokenSleepTime = builder.Configuration.GetValue<int>("Infrastructure:ExpireRefreshTokenIntervalMinutes");
 builder.Services.AddScoped<IExpireTokenServiceSettings, ExpireTokenServiceSettings>();
 builder.Services.AddScopedTimedHostedService<ExpireSessionsHostedService>(TimeSpan.FromMinutes(refreshTokenSleepTime));
+var cleanupAssetsSleepTime = builder.Configuration.GetValue<int>("Infrastructure:RemoveAssetsAndFoldersIntervalMinutes");
+builder.Services.AddScoped<IAssetsAndFoldersCleanupSettings, CleanupAssetsSettings>();
+builder.Services.AddScopedTimedHostedService<AssetsAndFoldersCleanupService>(TimeSpan.FromMinutes(cleanupAssetsSleepTime));
 
 // Middleware
 var app = builder.Build();

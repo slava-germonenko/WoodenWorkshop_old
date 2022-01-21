@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\WoodenWorkshop.Common\WoodenWorkshop.Common.csproj" />
+      <ProjectReference Include="..\WoodenWorkshop.Core\WoodenWorkshop.Core.csproj" />
+      <ProjectReference Include="..\WoodenWorkshop.Infrastructure.Blobs\WoodenWorkshop.Infrastructure.Blobs.csproj" />
+      <ProjectReference Include="..\WoodenWorkshop.Infrastructure.HostedServices\WoodenWorkshop.Infrastructure.HostedServices.csproj" />
+    </ItemGroup>
+
+</Project>
