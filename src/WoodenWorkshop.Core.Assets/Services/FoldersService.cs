@@ -1,9 +1,12 @@
+using Azure.Messaging.ServiceBus;
+
 using Microsoft.EntityFrameworkCore;
 
 using WoodenWorkshop.Common.Exceptions;
 using WoodenWorkshop.Common.Extensions;
 using WoodenWorkshop.Common.Models.Paging;
 using WoodenWorkshop.Core.Assets.Enums;
+using WoodenWorkshop.Core.Assets.Extensions;
 using WoodenWorkshop.Core.Assets.Services.Abstractions;
 using WoodenWorkshop.Core.Models;
 
@@ -13,10 +16,13 @@ public class FoldersService : IFoldersService
 {
     private readonly CoreContext _context;
 
+    private readonly ServiceBusClient _serviceBusClient;
 
-    public FoldersService(CoreContext context)
+
+    public FoldersService(CoreContext context, ServiceBusClient serviceBusClient)
     {
         _context = context;
+        _serviceBusClient = serviceBusClient;
     }
 
 
@@ -65,6 +71,8 @@ public class FoldersService : IFoldersService
     {
         await MarkFolderAssetsAsQueuedForRemoval(folderId);
         await MarFolderChildFoldersAsQueuedForRemoval(folderId);
+        await _serviceBusClient.CreateSender(QueueNames.CleanupFolders)
+            .SendFoldersCleanupMessage(folderId);
     }
 
     private async Task EnsureFolderNameIsNotInUse(string name, Guid? parentFolderId)

@@ -1,5 +1,9 @@
+using Azure.Messaging.ServiceBus;
+
 using Microsoft.EntityFrameworkCore;
 
+using WoodenWorkshop.Core.Assets.Enums;
+using WoodenWorkshop.Core.Assets.Extensions;
 using WoodenWorkshop.Core.Assets.Services.Abstractions;
 
 namespace WoodenWorkshop.Core.Assets.Services;
@@ -8,17 +12,22 @@ public class FoldersBulkActionsService : IFoldersBulkActionsService
 {
     private readonly CoreContext _context;
 
+    private readonly ServiceBusClient _serviceBusClient;
 
-    public FoldersBulkActionsService(CoreContext context)
+
+    public FoldersBulkActionsService(CoreContext context, ServiceBusClient serviceBusClient)
     {
         _context = context;
+        _serviceBusClient = serviceBusClient;
     }
 
 
-    public async Task QueuedForRemovalAsync(IEnumerable<Guid> folderIds)
+    public async Task QueuedForRemovalAsync(List<Guid> folderIds)
     {
         await MarkFolderAssetsAsQueuedForRemoval(folderIds);
         await MarFolderChildFoldersAsQueuedForRemoval(folderIds);
+        await _serviceBusClient.CreateSender(QueueNames.CleanupFolders)
+            .SendFoldersCleanupMessage(folderIds);
     }
     
     private async Task MarFolderChildFoldersAsQueuedForRemoval(IEnumerable<Guid> folderIds)

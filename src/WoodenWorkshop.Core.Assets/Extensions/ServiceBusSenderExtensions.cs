@@ -19,4 +19,16 @@ public static class ServiceBusSenderExtensions
         var serviceBusMessage = new ServiceBusMessage(JsonSerializer.Serialize(cleanupAssetsMessage));
         await sender.SendMessageAsync(serviceBusMessage);
     }
+
+    public static async Task SendFoldersCleanupMessage(this ServiceBusSender sender, Guid folderId)
+    {
+        await sender.SendFoldersCleanupMessage(new List<Guid> {folderId});
+    }
+    
+    public static async Task SendFoldersCleanupMessage(this ServiceBusSender sender, List<Guid> folderIds)
+    {
+        var cleanupAssetsMessage = new CleanupFoldersMessage(folderIds);
+        var serviceBusMessage = new ServiceBusMessage(JsonSerializer.Serialize(cleanupAssetsMessage));
+        await sender.SendMessageAsync(serviceBusMessage);
+    }
 }
