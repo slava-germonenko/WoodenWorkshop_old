@@ -1,7 +1,8 @@
 using System.Text;
-
+using Azure.Messaging.ServiceBus;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Azure;
 using Microsoft.IdentityModel.Tokens;
 
 using WoodenWorkshop.Auth;
@@ -10,8 +11,6 @@ using WoodenWorkshop.Auth.HostedServices.Settings;
 using WoodenWorkshop.Auth.Services;
 using WoodenWorkshop.Auth.Services.Abstractions;
 using WoodenWorkshop.Core;
-using WoodenWorkshop.Core.Assets.HostedServices;
-using WoodenWorkshop.Core.Assets.HostedServices.Settings;
 using WoodenWorkshop.Core.Assets.Services;
 using WoodenWorkshop.Core.Assets.Services.Abstractions;
 using WoodenWorkshop.Core.Contacts.Services;
@@ -99,13 +98,13 @@ builder.Services.AddDbContextFactory<CoreContext>(
 var blobStorageConnectionString = builder.Configuration.GetValue<string>("Infrastructure:BlobStorageConnectionString");
 builder.Services.AddBlobServiceFactory(blobStorageConnectionString);
 
+var serviceBusConnectionString = builder.Configuration.GetValue<string>("Infrastructure:ServiceBusConnectionString");
+builder.Services.AddScoped(_ => new ServiceBusClient(serviceBusConnectionString));
+
 // Hosted services
 var refreshTokenSleepTime = builder.Configuration.GetValue<int>("Infrastructure:ExpireRefreshTokenIntervalMinutes");
 builder.Services.AddScoped<IExpireTokenServiceSettings, ExpireTokenServiceSettings>();
 builder.Services.AddScopedTimedHostedService<ExpireSessionsHostedService>(TimeSpan.FromMinutes(refreshTokenSleepTime));
-var cleanupAssetsSleepTime = builder.Configuration.GetValue<int>("Infrastructure:RemoveAssetsAndFoldersIntervalMinutes");
-builder.Services.AddScoped<IAssetsAndFoldersCleanupSettings, CleanupAssetsSettings>();
-builder.Services.AddScopedTimedHostedService<AssetsAndFoldersCleanupService>(TimeSpan.FromMinutes(cleanupAssetsSleepTime));
 
 // Middleware
 var app = builder.Build();
