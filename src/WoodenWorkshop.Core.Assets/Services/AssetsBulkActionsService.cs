@@ -1,7 +1,10 @@
+using Azure.Messaging.ServiceBus;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 using WoodenWorkshop.Core.Assets.Dtos;
+using WoodenWorkshop.Core.Assets.Enums;
+using WoodenWorkshop.Core.Assets.Extensions;
 using WoodenWorkshop.Core.Assets.Services.Abstractions;
 using WoodenWorkshop.Core.Models;
 
@@ -11,12 +14,19 @@ public class AssetsBulkActionsService : IAssetsBulkActionsService
 {
     private readonly CoreContext _context;
 
+    private readonly ServiceBusClient _serviceBusClient;
+    
     private readonly IServiceScopeFactory _serviceScopeFactory;
 
 
-    public AssetsBulkActionsService(CoreContext context, IServiceScopeFactory scopeFactory)
+    public AssetsBulkActionsService(
+        CoreContext context,
+        ServiceBusClient serviceBusClient,
+        IServiceScopeFactory scopeFactory
+    )
     {
         _context = context;
+        _serviceBusClient = serviceBusClient;
         _serviceScopeFactory = scopeFactory;
     }
 
@@ -43,6 +53,10 @@ public class AssetsBulkActionsService : IAssetsBulkActionsService
             asset.QueuedForRemoval = true;
         });
         await _context.SaveChangesAsync();
+        await _serviceBusClient.CreateSender(QueueNames.CleanupAssets)
+            .SendAssetsCleanupMessage(
+                assetIds.ToList()
+            );
     }
 
     private async Task<Asset> UploadAssetAsync(CreateAssetDto assetDto)

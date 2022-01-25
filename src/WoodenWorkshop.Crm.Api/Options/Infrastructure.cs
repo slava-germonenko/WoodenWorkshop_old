@@ -9,8 +9,4 @@ public class Infrastructure
     public int ExpireRefreshTokenIntervalMinutes { get; set; }
     
     public int ExpireRefreshTokenProcessLimit { get; set; }
-    
-    public int RemoveAssetsAndFoldersIntervalMinutes { get; set; }
-    
-    public int RemoveAssetsAndFoldersProcessLimit { get; set; }
 }

@@ -1,4 +1,6 @@
+using Azure.Messaging.ServiceBus;
 using Azure.Storage.Blobs;
+
 using Microsoft.EntityFrameworkCore;
 
 using WoodenWorkshop.Common.Exceptions;
@@ -6,6 +8,7 @@ using WoodenWorkshop.Common.Extensions;
 using WoodenWorkshop.Common.Models.Paging;
 using WoodenWorkshop.Core.Assets.Dtos;
 using WoodenWorkshop.Core.Assets.Enums;
+using WoodenWorkshop.Core.Assets.Extensions;
 using WoodenWorkshop.Core.Assets.Services.Abstractions;
 using WoodenWorkshop.Core.Models;
 using WoodenWorkshop.Infrastructure.Blobs.Abstractions;
@@ -15,16 +18,23 @@ namespace WoodenWorkshop.Core.Assets.Services;
 public class AssetsService : IAssetsService
 {
     private const string AssetsContainerName = "assets";
-    
-    private readonly CoreContext _context;
 
     private readonly IBlobServiceFactory _blobServiceFactory;
 
+    private readonly CoreContext _context;
+    
+    private readonly ServiceBusClient _serviceBusClient;
 
-    public AssetsService(CoreContext context, IBlobServiceFactory blobServiceFactory)
+
+    public AssetsService(
+        IBlobServiceFactory blobServiceFactory,
+        CoreContext context,
+        ServiceBusClient serviceBusClient
+   )
     {
-        _context = context;
         _blobServiceFactory = blobServiceFactory;
+        _context = context;
+        _serviceBusClient = serviceBusClient;
     }
 
     public async Task<Asset> GetAssetAsync(Guid id)
@@ -108,13 +118,18 @@ public class AssetsService : IAssetsService
     public async Task MarkAsQueuedForRemovalAsync(Guid assetId)
     {
         var asset = await _context.Assets.FirstOrDefaultAsync(asset => asset.Id == assetId && !asset.QueuedForRemoval);
-        if (asset is not null)
+        if (asset is null)
         {
-            asset.QueuedForRemoval = true;
-            asset.FolderId = null;
-            _context.Assets.Update(asset);
-            await _context.SaveChangesAsync();
+            return;
         }
+        
+        asset.QueuedForRemoval = true;
+        asset.FolderId = null;
+        _context.Assets.Update(asset);
+        await _context.SaveChangesAsync();
+
+        await _serviceBusClient.CreateSender(QueueNames.CleanupAssets)
+            .SendAssetsCleanupMessage(assetId);
     }
     
     public async Task<Asset> UpdateAssetBlobAsync(Guid assetId, Stream file)

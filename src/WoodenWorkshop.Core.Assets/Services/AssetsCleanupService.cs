@@ -1,28 +1,22 @@
-using Microsoft.EntityFrameworkCore;
-
-using WoodenWorkshop.Common.Extensions;
-using WoodenWorkshop.Common.Models.Paging;
 using WoodenWorkshop.Core.Assets.Services.Abstractions;
-using WoodenWorkshop.Core.Models;
 
 namespace WoodenWorkshop.Core.Assets.Services;
 
 public class AssetsCleanupService : IAssetsCleanupService
 {
-    private readonly CoreContext _context;
+    private readonly IAssetsService _assetsService;
 
 
-    public AssetsCleanupService(CoreContext context)
+    public AssetsCleanupService(IAssetsService assetsService)
     {
-        _context = context;
+        _assetsService = assetsService;
     }
 
-
-    public async Task<PagedCollection<Asset>> GetAssetsQueuedForRemovalAsync(Page page, Guid? folderId)
+    public async Task CleanUpAssetsAsync(IEnumerable<Guid> assetIds)
     {
-        return await _context.Assets.AsNoTracking()
-            .Where(asset => asset.FolderId == folderId && asset.QueuedForRemoval)
-            .OrderBy(asset => asset.Updated)
-            .ToPagedCollectionAsync(page);
+        foreach (var assetId in assetIds)
+        {
+            await _assetsService.RemoveAssetAsync(assetId);
+        }
     }
 }
