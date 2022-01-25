@@ -82,7 +82,7 @@ public class FoldersController : ControllerBase
     [HttpPatch("")]
     public async Task<NoContentResult> QueueFoldersForRemovalAsync([FromBody] RemoveFoldersDto foldersDto)
     {
-        await _foldersBulkActionsService.QueuedForRemovalAsync(foldersDto.FolderIds);
+        await _foldersBulkActionsService.QueuedForRemovalAsync(foldersDto.FolderIds.ToList());
         return NoContent();
     }
 }
