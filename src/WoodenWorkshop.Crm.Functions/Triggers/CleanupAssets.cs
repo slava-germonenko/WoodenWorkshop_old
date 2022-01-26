@@ -1,5 +1,4 @@
 using System.Text.Json;
-using System.Threading.Tasks;
 
 using Microsoft.Azure.Functions.Worker;
 
@@ -24,6 +23,7 @@ public class CleanupAssets
         var cleanupAssetsMessage = JsonSerializer.Deserialize<CleanupAssetsMessage>(messageBody);
         if (cleanupAssetsMessage is not null)
         {
+            Console.WriteLine(cleanupAssetsMessage.AssetIds.Count);
             await _assetsCleanupService.CleanUpAssetsAsync(cleanupAssetsMessage.AssetIds);
         }
     }

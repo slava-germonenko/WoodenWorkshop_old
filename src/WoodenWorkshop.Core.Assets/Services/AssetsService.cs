@@ -11,7 +11,6 @@ using WoodenWorkshop.Core.Assets.Enums;
 using WoodenWorkshop.Core.Assets.Extensions;
 using WoodenWorkshop.Core.Assets.Services.Abstractions;
 using WoodenWorkshop.Core.Models;
-using WoodenWorkshop.Infrastructure.Blobs.Abstractions;
 
 namespace WoodenWorkshop.Core.Assets.Services;
 
@@ -19,7 +18,7 @@ public class AssetsService : IAssetsService
 {
     private const string AssetsContainerName = "assets";
 
-    private readonly IBlobServiceFactory _blobServiceFactory;
+    private readonly BlobServiceClient _blobServiceClient;
 
     private readonly CoreContext _context;
     
@@ -27,12 +26,12 @@ public class AssetsService : IAssetsService
 
 
     public AssetsService(
-        IBlobServiceFactory blobServiceFactory,
+        BlobServiceClient blobServiceClient,
         CoreContext context,
         ServiceBusClient serviceBusClient
    )
     {
-        _blobServiceFactory = blobServiceFactory;
+        _blobServiceClient = blobServiceClient;
         _context = context;
         _serviceBusClient = serviceBusClient;
     }
@@ -62,7 +61,7 @@ public class AssetsService : IAssetsService
 
         var assetId = Guid.NewGuid();
         var blobName = $"{assetId.ToString()}.{fileExtension}";
-        var assetsContainerName = CreateBlobContainerClient();
+        var assetsContainerName = _blobServiceClient.GetBlobContainerClient(AssetsContainerName);
 
         await assetsContainerName.UploadBlobAsync(blobName, assetDto.FileStream);
         var asset = new Asset
@@ -91,7 +90,8 @@ public class AssetsService : IAssetsService
             return;
         }
 
-        var blobClient = CreateBlobContainerClient().GetBlobClient(asset.BlobName);
+        var blobClient = _blobServiceClient.GetBlobContainerClient(AssetsContainerName)
+            .GetBlobClient(asset.BlobName);
 
         await blobClient.DeleteIfExistsAsync();
         _context.Assets.Remove(asset);
@@ -139,7 +139,8 @@ public class AssetsService : IAssetsService
             Errors.AssetNotFound(assetId)
         );
 
-        var blobClient = CreateBlobContainerClient().GetBlobClient(asset.BlobName);
+        var blobClient = _blobServiceClient.GetBlobContainerClient(AssetsContainerName)
+            .GetBlobClient(asset.BlobName);
         await blobClient.UploadAsync(file);
 
         asset.Size = file.Length;
@@ -147,10 +148,6 @@ public class AssetsService : IAssetsService
         return asset;
     }
 
-    private BlobContainerClient CreateBlobContainerClient()
-    {
-        return _blobServiceFactory.CrateBlobServiceClient().GetBlobContainerClient(AssetsContainerName);
-    }
 
     private async Task EnsureFolderExists(Guid? folderId)
     {

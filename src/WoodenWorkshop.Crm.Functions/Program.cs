@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -7,9 +8,6 @@ using WoodenWorkshop.Core;
 using WoodenWorkshop.Core.Assets.Services;
 using WoodenWorkshop.Core.Assets.Services.Abstractions;
 using WoodenWorkshop.Crm.Functions.Middleware;
-using WoodenWorkshop.Infrastructure.Blobs;
-using WoodenWorkshop.Infrastructure.Blobs.Abstractions;
-using WoodenWorkshop.Infrastructure.Blobs.DependencyInjection;
 
 namespace WoodenWorkshop.Crm.Functions;
 
@@ -27,11 +25,13 @@ public static class Program
                 var configuration = BuildConfiguration();
                 
                 builder.Services.AddScoped<IAssetsService, AssetsService>();
-                builder.Services.AddScoped<IBlobServiceFactory, BlobServiceFactory>();
 
                 var blobStorageConnectionString = configuration.GetValue<string>("Infrastructure:BlobStorageConnectionString");
-                builder.Services.AddBlobServiceFactory(blobStorageConnectionString);
-                
+                builder.Services.AddAzureClients(azureBuilder =>
+                {
+                    azureBuilder.AddBlobServiceClient(blobStorageConnectionString);
+                });
+
                 var coreContextConnectionString = configuration.GetValue<string>("Infrastructure:CoreSqlConnectionString");
                 builder.Services.AddDbContext<CoreContext>(options =>
                 {

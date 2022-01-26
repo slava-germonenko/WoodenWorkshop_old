@@ -1,5 +1,5 @@
 using System.Text;
-using Azure.Messaging.ServiceBus;
+
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Azure;
@@ -24,7 +24,6 @@ using WoodenWorkshop.Crm.Api.Options;
 using WoodenWorkshop.Crm.Api.Services;
 using WoodenWorkshop.Crm.Api.Services.Abstractions;
 using WoodenWorkshop.Crm.Api.Settings;
-using WoodenWorkshop.Infrastructure.Blobs.DependencyInjection;
 using WoodenWorkshop.Infrastructure.HostedServices.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -95,11 +94,14 @@ builder.Services.AddDbContext<CoreContext>(
 builder.Services.AddDbContextFactory<CoreContext>(
     options => options.UseSqlServer(coreConnectionString)
 );
-var blobStorageConnectionString = builder.Configuration.GetValue<string>("Infrastructure:BlobStorageConnectionString");
-builder.Services.AddBlobServiceFactory(blobStorageConnectionString);
 
 var serviceBusConnectionString = builder.Configuration.GetValue<string>("Infrastructure:ServiceBusConnectionString");
-builder.Services.AddScoped(_ => new ServiceBusClient(serviceBusConnectionString));
+var blobStorageConnectionString = builder.Configuration.GetValue<string>("Infrastructure:BlobStorageConnectionString");
+builder.Services.AddAzureClients(azureBuilder =>
+{
+    azureBuilder.AddServiceBusClient(serviceBusConnectionString);
+    azureBuilder.AddBlobServiceClient(blobStorageConnectionString);
+});
 
 // Hosted services
 var refreshTokenSleepTime = builder.Configuration.GetValue<int>("Infrastructure:ExpireRefreshTokenIntervalMinutes");
