@@ -1,5 +1,5 @@
 using System.Text.Json;
-
+using Azure.Core;
 using Microsoft.Azure.Functions.Worker;
 
 using WoodenWorkshop.Core.Assets.Dtos;
@@ -23,7 +23,6 @@ public class CleanupAssets
         var cleanupAssetsMessage = JsonSerializer.Deserialize<CleanupAssetsMessage>(messageBody);
         if (cleanupAssetsMessage is not null)
         {
-            Console.WriteLine(cleanupAssetsMessage.AssetIds.Count);
             await _assetsCleanupService.CleanUpAssetsAsync(cleanupAssetsMessage.AssetIds);
         }
     }

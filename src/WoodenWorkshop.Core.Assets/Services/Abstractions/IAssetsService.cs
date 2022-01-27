@@ -10,7 +10,7 @@ public interface IAssetsService
 
     Task<Asset> GetAssetAsync(Guid id);
     
-    Task<PagedCollection<Asset>> GetAssetsAsync(Page page, Guid? folderId);
+    Task<PagedCollection<Asset>> GetAssetsAsync(Page page, Guid? folderId = null, bool includeQueuedForRemoval = false);
 
     Task MarkAsQueuedForRemovalAsync(Guid assetId);
 
