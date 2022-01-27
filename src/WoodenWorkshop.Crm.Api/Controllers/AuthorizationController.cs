@@ -4,6 +4,7 @@ using Microsoft.Extensions.Options;
 
 using WoodenWorkshop.Auth.Models;
 using WoodenWorkshop.Auth.Services.Abstractions;
+using WoodenWorkshop.Common.Exceptions;
 using WoodenWorkshop.Crm.Api.Dtos;
 using WoodenWorkshop.Crm.Api.Models;
 using WoodenWorkshop.Crm.Api.Models.Http;
@@ -19,24 +20,29 @@ public class AuthorizationController : ControllerBase
 
     private readonly IAuthorizationService _authorizationService;
 
-    private readonly IUserSessionService _userSessionService;
-    
+    private readonly ISessionsListService _sessionsListService;
+
+    private readonly ISessionsService _sessionsService;
+
     private readonly IOptionsSnapshot<Security> _securityOptions;
 
-    private string? ClientIpAddress => HttpContext.Connection.RemoteIpAddress?.ToString();
+    private string ClientIpAddress => HttpContext.Connection.RemoteIpAddress?.ToString()
+        ?? throw new BadHttpRequestException("Невозможно определить IP адрес пользователя!");
 
     private int AccessTokenTtl => _securityOptions.Value.AccessTokenTtlSeconds;
 
 
     public AuthorizationController(
         IAuthorizationService authorizationService,
-        IUserSessionService userSessionService,
-        IOptionsSnapshot<Security> securityOptions
+        IOptionsSnapshot<Security> securityOptions,
+        ISessionsListService sessionsListService,
+        ISessionsService sessionsService
     )
     {
         _authorizationService = authorizationService;
-        _userSessionService = userSessionService;
         _securityOptions = securityOptions;
+        _sessionsListService = sessionsListService;
+        _sessionsService = sessionsService;
     }
 
 
@@ -88,7 +94,11 @@ public class AuthorizationController : ControllerBase
             throw new BadHttpRequestException("Токен не был найден ни в теле запроса, ни в кухах.");
         }
 
-        await _userSessionService.ExpireSessionAsync(token);
+        var session = await _sessionsService.GetSessionByRefreshTokenAsync(token);
+        if (session is not null)
+        {
+            await _sessionsListService.RemoveSession(session.Id);
+        }
         return NoContent();
     }
 
@@ -101,14 +111,15 @@ public class AuthorizationController : ControllerBase
             throw new BadHttpRequestException("Токен не был найден.");
         }
 
-        var session = await _userSessionService.GetSessionAsync(refreshToken);
+        var session = await _sessionsService.GetSessionByRefreshTokenAsync(refreshToken)
+            ?? throw new NotFoundException($"Сессия с токером '{refreshToken}' не найдена");
         return Ok(session);
     }
 
     [HttpDelete("sessions/{sessionId:guid}")]
     public async Task<NoContentResult> RemoveSessionAsync(Guid sessionId)
     {
-        await _userSessionService.ExpireSessionAsync(sessionId);
+        await _sessionsListService.RemoveSession(sessionId);
         return NoContent();
     }
 

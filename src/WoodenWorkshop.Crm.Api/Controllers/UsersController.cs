@@ -25,20 +25,20 @@ public class UsersController : UserAwareController
     
     private readonly IUsersService _usersService;
 
-    private readonly IUserSessionService _userSessionService;
+    private readonly ISessionsListService _sessionsListService;
 
 
     public UsersController(
         IUserRolesService userRolesService,
         IUsersListService usersListService,
-        IUsersService usersService,
-        IUserSessionService userSessionService
+        IUsersService usersService, 
+        ISessionsListService sessionsListService
     )
     {
         _userRolesService = userRolesService;
         _usersListService = usersListService;
         _usersService = usersService;
-        _userSessionService = userSessionService;
+        _sessionsListService = sessionsListService;
     }
 
 
@@ -134,7 +134,7 @@ public class UsersController : UserAwareController
     [HttpGet("{userId:guid}/sessions")]
     public async Task<ActionResult<ICollection<Session>>> GetUserSessions(Guid userId)
     {
-        var sessions = await _userSessionService.GetUserSessionsAsync(userId);
+        var sessions = await _sessionsListService.GetSessionsList(userId);
         return Ok(new { Sessions = sessions });
     }
 }

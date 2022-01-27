@@ -1,11 +1,9 @@
 using System.Text.Json;
-
 using Microsoft.Azure.Functions.Worker;
-
 using WoodenWorkshop.Core.Assets.Dtos;
 using WoodenWorkshop.Core.Assets.Services.Abstractions;
 
-namespace WoodenWorkshop.Crm.Functions.Triggers;
+namespace WoodenWorkshop.Crm.Functions.Triggers.Assets;
 
 public class CleanupFolders
 {

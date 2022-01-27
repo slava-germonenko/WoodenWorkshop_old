@@ -29,8 +29,4 @@
       <ProjectReference Include="..\WoodenWorkshop.Infrastructure.Blobs\WoodenWorkshop.Infrastructure.Blobs.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Settings" />
-    </ItemGroup>
-
 </Project>
