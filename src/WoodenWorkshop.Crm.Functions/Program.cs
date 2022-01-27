@@ -23,13 +23,18 @@ public static class Program
             .ConfigureFunctionsWorkerDefaults((_, builder) =>
             {
                 var configuration = BuildConfiguration();
-                
+
+                builder.Services.AddScoped<IAssetsCleanupService, AssetsCleanupService>();
                 builder.Services.AddScoped<IAssetsService, AssetsService>();
+                builder.Services.AddScoped<IFoldersCleanupService, FoldersCleanupService>();
+                builder.Services.AddScoped<IFoldersService, FoldersService>();
 
                 var blobStorageConnectionString = configuration.GetValue<string>("Infrastructure:BlobStorageConnectionString");
+                var serviceBusConnectionString = configuration.GetValue<string>("Infrastructure:ServiceBusConnectionString");
                 builder.Services.AddAzureClients(azureBuilder =>
                 {
                     azureBuilder.AddBlobServiceClient(blobStorageConnectionString);
+                    azureBuilder.AddServiceBusClient(serviceBusConnectionString);
                 });
 
                 var coreContextConnectionString = configuration.GetValue<string>("Infrastructure:CoreSqlConnectionString");
@@ -38,7 +43,8 @@ public static class Program
                     options.UseSqlServer(coreContextConnectionString);
                 });
 
-                builder.UseMiddleware<ExceptionHandlingMiddleware>();
+                // Uncomment once we have error handling logic
+                // builder.UseMiddleware<ExceptionHandlingMiddleware>();
             })
             .Build();
 

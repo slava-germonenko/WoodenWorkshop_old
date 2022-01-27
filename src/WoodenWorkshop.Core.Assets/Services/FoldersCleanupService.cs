@@ -1,9 +1,6 @@
-using System.Text.Json;
-
 using Azure.Messaging.ServiceBus;
 
 using WoodenWorkshop.Common.Models.Paging;
-using WoodenWorkshop.Core.Assets.Dtos;
 using WoodenWorkshop.Core.Assets.Enums;
 using WoodenWorkshop.Core.Assets.Extensions;
 using WoodenWorkshop.Core.Assets.Services.Abstractions;
@@ -45,19 +42,22 @@ public class FoldersCleanupService : IFoldersCleanupService
 
     private async Task RemoveFolderContentAsync(Guid folderId)
     {
-        var childFolders = await _foldersService.GetFoldersAsync(_allItemsPage, folderId);
+        var childFolders = await _foldersService.GetFoldersAsync(_allItemsPage, folderId, true);
         foreach (var folder in childFolders.Items)
         {
             await RemoveFolderContentAsync(folder.Id);
         }
 
-        var folderAssets = await _assetsService.GetAssetsAsync(_allItemsPage, folderId);
+        var folderAssets = await _assetsService.GetAssetsAsync(_allItemsPage, folderId, true);
         foreach (var asset in folderAssets.Items)
         {
             asset.FolderId = null;
+            asset.QueuedForRemoval = true;
             await _assetsService.UpdateAssetDetailsAsync(asset);
         }
 
+        await _foldersService.RemoveFolder(folderId);
+        
         await using var sender = _serviceBusClient.CreateSender(QueueNames.CleanupAssets);
         for (var offset = 0; offset < folderAssets.Items.Count; offset += CleanupAssetsMessageLen)
         {

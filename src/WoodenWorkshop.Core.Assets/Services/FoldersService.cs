@@ -26,12 +26,21 @@ public class FoldersService : IFoldersService
     }
 
 
-    public async Task<PagedCollection<Folder>> GetFoldersAsync(Page page, Guid? parentFolderId = null)
+    public async Task<PagedCollection<Folder>> GetFoldersAsync(
+        Page page,
+        Guid? parentFolderId = null,
+        bool includeQueuedForRemoval = false
+    )
     {
-        return await _context.Folders.AsNoTracking()
-            .Where(folder => folder.ParentFolderId == parentFolderId && !folder.QueuedForRemoval)
-            .OrderBy(folder => folder.Name)
-            .ToPagedCollectionAsync(page);
+        var baseQuery = _context.Folders.AsNoTracking()
+            .Where(folder => folder.ParentFolderId == parentFolderId);
+
+        if (!includeQueuedForRemoval)
+        {
+            baseQuery = baseQuery.Where(folder => !folder.QueuedForRemoval);
+        }
+        
+        return await baseQuery.OrderBy(folder => folder.Name).ToPagedCollectionAsync(page);
     }
 
     public async Task<Folder> CreateAsync(Folder folder)
@@ -52,13 +61,13 @@ public class FoldersService : IFoldersService
         return folder;
     }
 
-    public async Task RemoveFolder(Guid folderId, bool forceRemoveQueuedForRemoval = false)
+    public async Task RemoveFolder(Guid folderId)
     {
         var folder = await _context.Folders.FirstOrDefaultAsync(
             folder => folder.Id == folderId
         );
 
-        if (folder is null || folder.QueuedForRemoval && !forceRemoveQueuedForRemoval)
+        if (folder is null)
         {
             return;
         }

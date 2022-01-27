@@ -41,12 +41,21 @@ public class AssetsService : IAssetsService
         return await _context.Assets.FindOrNotFoundExceptionAsync(id, Errors.AssetNotFound(id));
     }
 
-    public async Task<PagedCollection<Asset>> GetAssetsAsync(Page page, Guid? folderId)
+    public async Task<PagedCollection<Asset>> GetAssetsAsync(
+        Page page,
+        Guid? folderId = null,
+        bool includeQueuedForRemoval = false
+    )
     {
-        return await _context.Assets.AsNoTracking()
-            .Where(asset => asset.FolderId == folderId && !asset.QueuedForRemoval && asset.Url != null)
-            .OrderBy(asset => asset.AssetName)
-            .ToPagedCollectionAsync(page);
+        var baseQuery = _context.Assets.AsNoTracking()
+            .Where(asset => asset.FolderId == folderId);
+
+        if (!includeQueuedForRemoval)
+        {
+            baseQuery = baseQuery.Where(asset => !asset.QueuedForRemoval);
+        }
+
+        return await baseQuery.OrderBy(asset => asset.AssetName).ToPagedCollectionAsync(page);
     }
 
     public async Task<Asset> CreateAssetAsync(CreateAssetDto assetDto)
@@ -81,9 +90,7 @@ public class AssetsService : IAssetsService
 
     public async Task RemoveAssetAsync(Guid assetId)
     {
-        var asset = await _context.Assets.FirstOrDefaultAsync(
-            asset => asset.Id == assetId && !asset.QueuedForRemoval
-        );
+        var asset = await _context.Assets.FindAsync(assetId);
 
         if (asset is null)
         {
@@ -101,7 +108,7 @@ public class AssetsService : IAssetsService
     public async Task<Asset> UpdateAssetDetailsAsync(Asset assetToUpdate)
     {
         var asset = await _context.Assets.FirstOrNotFoundExceptionAsync(
-            asset => asset.Id == assetToUpdate.Id && !asset.QueuedForRemoval,
+            asset => asset.Id == assetToUpdate.Id,
             Errors.AssetNotFound(assetToUpdate.Id)
         );
 
