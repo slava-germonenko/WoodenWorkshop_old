@@ -4,6 +4,6 @@ namespace WoodenWorkshop.Crm.Api.Dtos;
 
 public record UserCredentialsDto(
     [Required] string Username,
-    [Required] string Password,
-    string? DeviceName
+    [Required] string Password, 
+    [Required] string DeviceName
 );

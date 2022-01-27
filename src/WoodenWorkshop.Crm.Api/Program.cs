@@ -6,8 +6,6 @@ using Microsoft.Extensions.Azure;
 using Microsoft.IdentityModel.Tokens;
 
 using WoodenWorkshop.Auth;
-using WoodenWorkshop.Auth.HostedServices;
-using WoodenWorkshop.Auth.HostedServices.Settings;
 using WoodenWorkshop.Auth.Services;
 using WoodenWorkshop.Auth.Services.Abstractions;
 using WoodenWorkshop.Core;
@@ -23,8 +21,6 @@ using WoodenWorkshop.Crm.Api.Middleware;
 using WoodenWorkshop.Crm.Api.Options;
 using WoodenWorkshop.Crm.Api.Services;
 using WoodenWorkshop.Crm.Api.Services.Abstractions;
-using WoodenWorkshop.Crm.Api.Settings;
-using WoodenWorkshop.Infrastructure.HostedServices.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 var azureAppConfigurationConnectionString = builder.Configuration.GetValue<string>(
@@ -70,10 +66,11 @@ builder.Services.AddScoped<IFoldersService, FoldersService>();
 builder.Services.AddScoped<IRolePermissionsService, RolePermissionsService>();
 builder.Services.AddScoped<IRolesListService, RolesListService>();
 builder.Services.AddScoped<IRolesService, RolesService>();
+builder.Services.AddScoped<ISessionsListService, SessionsListService>();
+builder.Services.AddScoped<ISessionsService, SessionsService>();
 builder.Services.AddScoped<IUserRolesService, UserRolesService>();
 builder.Services.AddScoped<IUsersListService, UsersListService>();
 builder.Services.AddScoped<IUsersService, UsersService>();
-builder.Services.AddScoped<IUserSessionService, UserSessionService>();
 builder.Services.AddScoped<ITokenService, JwtService>();
 
 // Infrastructure
@@ -102,11 +99,6 @@ builder.Services.AddAzureClients(azureBuilder =>
     azureBuilder.AddServiceBusClient(serviceBusConnectionString);
     azureBuilder.AddBlobServiceClient(blobStorageConnectionString);
 });
-
-// Hosted services
-var refreshTokenSleepTime = builder.Configuration.GetValue<int>("Infrastructure:ExpireRefreshTokenIntervalMinutes");
-builder.Services.AddScoped<IExpireTokenServiceSettings, ExpireTokenServiceSettings>();
-builder.Services.AddScopedTimedHostedService<ExpireSessionsHostedService>(TimeSpan.FromMinutes(refreshTokenSleepTime));
 
 // Middleware
 var app = builder.Build();

@@ -10,36 +10,40 @@ namespace WoodenWorkshop.Crm.Api.Services;
 
 public class AuthorizationService : IAuthorizationService
 {
-    private readonly IUserSessionService _userSessionService;
-
     private readonly ITokenService _tokenService;
 
     private readonly IUsersService _usersService;
 
     private readonly IUserRolesService _userRolesService;
 
+    private readonly ISessionsListService _sessionsListService;
+    
+    private readonly ISessionsService _sessionsService;
+
 
     public AuthorizationService(
-        IUserSessionService userSessionService,
         ITokenService tokenService,
         IUsersService usersService,
-        IUserRolesService userRolesService
+        IUserRolesService userRolesService, 
+        ISessionsService sessionsService,
+        ISessionsListService sessionsListService
     )
     {
-        _userSessionService = userSessionService;
         _tokenService = tokenService;
         _usersService = usersService;
         _userRolesService = userRolesService;
+        _sessionsService = sessionsService;
+        _sessionsListService = sessionsListService;
     }
 
 
-    public async Task<AuthorizationResult> AuthorizeAsync(UserCredentialsDto userCredentials, string? ipAddress)
+    public async Task<AuthorizationResult> AuthorizeAsync(UserCredentialsDto userCredentials, string ipAddress)
     {
         var user = await _usersService.GetUserDetailsAsync(
             userCredentials.Username,
             userCredentials.Password
         );
-        var thisDeviceSession = await _userSessionService.GetSessionAsync(
+        var thisDeviceSession = await _sessionsService.GetUserSessionByDeviceAndIp(
             user.Id,
             userCredentials.DeviceName,
             ipAddress
@@ -51,7 +55,7 @@ public class AuthorizationService : IAuthorizationService
 
     public async Task<AuthorizationResult> RefreshSessionAsync(string refreshToken)
     {
-        var session = await _userSessionService.GetSessionAsync(refreshToken);
+        var session = await _sessionsService.GetSessionByRefreshTokenAsync(refreshToken);
         if (session is null)
         {
             throw new BadHttpRequestException("Невозможно обновить сессию, которая была завершена или не существует.");
@@ -61,7 +65,7 @@ public class AuthorizationService : IAuthorizationService
         var (newAccessTokenInfo, newRefreshTokenInfo) = await BuildAccessAndRefreshTokensAsync(user);
         session.RefreshToken = newRefreshTokenInfo.Token;
         session.ExpireDate = newRefreshTokenInfo.ExpireDate;
-        await _userSessionService.SaveSessionAsync(session);
+        await _sessionsService.UpdateSessionAsync(session);
 
         return new AuthorizationResult(newAccessTokenInfo, newRefreshTokenInfo, session);
     }
@@ -69,7 +73,7 @@ public class AuthorizationService : IAuthorizationService
     private async Task<AuthorizationResult> StartUserSessionAsync(
         User user,
         UserCredentialsDto userCredentials,
-        string? ipAddress
+        string ipAddress
     )
     {
         var (accessTokenInfo, refreshTokenInfo) = await BuildAccessAndRefreshTokensAsync(user);
@@ -82,7 +86,7 @@ public class AuthorizationService : IAuthorizationService
             UserId = user.Id,
             ExpireDate = refreshTokenInfo.ExpireDate,
         };
-        await _userSessionService.SaveSessionAsync(session);
+        await _sessionsListService.CreateSessionAsync(session);
         return new AuthorizationResult(accessTokenInfo, refreshTokenInfo, session);
     }
 

@@ -16,9 +16,9 @@ public class Session
     [Required, StringLength(200)]
     public string RefreshToken { get; set; }
     
-    [StringLength(100)]
-    public string? DeviceName { get; set; }
+    [Required, StringLength(100)]
+    public string DeviceName { get; set; }
 
-    [StringLength(40)]
-    public string? IpAddress { get; set; }
+    [Required, StringLength(40)]
+    public string IpAddress { get; set; }
 }

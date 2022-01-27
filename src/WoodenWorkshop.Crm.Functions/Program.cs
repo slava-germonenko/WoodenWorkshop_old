@@ -3,7 +3,8 @@ using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-
+using WoodenWorkshop.Auth.Services;
+using WoodenWorkshop.Auth.Services.Abstractions;
 using WoodenWorkshop.Core;
 using WoodenWorkshop.Core.Assets.Services;
 using WoodenWorkshop.Core.Assets.Services.Abstractions;
@@ -28,6 +29,7 @@ public static class Program
                 builder.Services.AddScoped<IAssetsService, AssetsService>();
                 builder.Services.AddScoped<IFoldersCleanupService, FoldersCleanupService>();
                 builder.Services.AddScoped<IFoldersService, FoldersService>();
+                builder.Services.AddScoped<ISessionsCleanupService, SessionsCleanupService>();
 
                 var blobStorageConnectionString = configuration.GetValue<string>("Infrastructure:BlobStorageConnectionString");
                 var serviceBusConnectionString = configuration.GetValue<string>("Infrastructure:ServiceBusConnectionString");
