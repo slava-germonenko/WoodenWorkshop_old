@@ -3,12 +3,13 @@ using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+
+using WoodenWorkshop.Auth;
 using WoodenWorkshop.Auth.Services;
 using WoodenWorkshop.Auth.Services.Abstractions;
 using WoodenWorkshop.Core;
 using WoodenWorkshop.Core.Assets.Services;
 using WoodenWorkshop.Core.Assets.Services.Abstractions;
-using WoodenWorkshop.Crm.Functions.Middleware;
 
 namespace WoodenWorkshop.Crm.Functions;
 
@@ -39,14 +40,20 @@ public static class Program
                     azureBuilder.AddServiceBusClient(serviceBusConnectionString);
                 });
 
-                var coreContextConnectionString = configuration.GetValue<string>("Infrastructure:CoreSqlConnectionString");
+                var coreContextConnectionString = configuration
+                    .GetValue<string>("Infrastructure:CoreSqlConnectionString");
                 builder.Services.AddDbContext<CoreContext>(options =>
                 {
                     options.UseSqlServer(coreContextConnectionString);
                 });
 
-                // Uncomment once we have error handling logic
-                // builder.UseMiddleware<ExceptionHandlingMiddleware>();
+                var authContextConnectionString = configuration
+                    .GetValue<string>("Infrastructure:AuthSqlConnectionString");
+                builder.Services.AddDbContext<AuthContext>(options =>
+                {
+                    options.UseSqlServer(authContextConnectionString);
+                });
+
             })
             .Build();
 
