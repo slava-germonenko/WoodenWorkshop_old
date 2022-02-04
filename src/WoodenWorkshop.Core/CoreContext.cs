@@ -11,10 +11,6 @@ public class CoreContext : DbContext
     public DbSet<Contact> Contacts { get; set; }
     public DbSet<Folder> Folders { get; set; }
     public DbSet<Permission> Permissions { get; set; }
-    public DbSet<PriceType> PriceTypes { get; set; }
-    public DbSet<Product> Products { get; set; }
-    public DbSet<ProductAsset> ProductAssets { get; set; }
-    public DbSet<ProductPrice> ProductPrices { get; set; }
     public DbSet<Role> Roles { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<UserRole> UserRoles { get; set; }
@@ -43,7 +39,6 @@ public class CoreContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
         modelBuilder.ApplyConfiguration(new AssetEntityConfiguration());
-        modelBuilder.ApplyConfiguration(new ProductAssetConfiguration());
         modelBuilder.ApplyConfiguration(new UserRoleEntityConfiguration());
     }
 
