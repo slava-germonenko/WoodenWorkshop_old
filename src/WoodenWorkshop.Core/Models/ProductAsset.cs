@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace WoodenWorkshop.Core.Models;
 
-public class ProductAssets : BaseModel
+public class ProductAsset : BaseModel
 {
     [Range(0, int.MaxValue)]
     public int AssetOrder { get; set; }

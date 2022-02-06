@@ -15,7 +15,7 @@ public class CoreContext : DbContext
     public DbSet<Permission> Permissions { get; set; }
     public DbSet<PriceType> PriceTypes { get; set; }
     public DbSet<Product> Products { get; set; }
-    public DbSet<ProductAssets> ProductAssets { get; set; }
+    public DbSet<ProductAsset> ProductAssets { get; set; }
     public DbSet<ProductPrice> ProductPrices { get; set; }
     public DbSet<ProductSocialLink> ProductSocialLinks { get; set; }
     public DbSet<Role> Roles { get; set; }

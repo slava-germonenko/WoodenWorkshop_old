@@ -32,17 +32,37 @@ public class Product : BaseModel
 
     public bool IsActive { get; set; } = true;
 
-    public bool IsDeleted { get; set; } = false;
+    public bool IsDeleted { get; set; }
 
     public ProductItemStatus ItemStatus { get; set; } = ProductItemStatus.None;
 
     public Guid? MaterialId { get; set; }
+    
+    public Guid? CategoryId { get; set; }
 
     public Material? Material { get; set; }
+    
+    public Category? Category { get; set; }
 
-    public ICollection<ProductAssets> Assets { get; set; } = new List<ProductAssets>();
-
+    public ICollection<ProductAsset> Assets { get; set; } = new List<ProductAsset>();
+    
+    public ICollection<ProductPrice> ProductPrices { get; set; } = new List<ProductPrice>();
+    
     public ICollection<ProductSocialLink> ProductSocialLinks { get; set; } = new List<ProductSocialLink>();
 
-    public ICollection<ProductPrice> ProductPrices { get; set; } = new List<ProductPrice>();
+    public void CopyDetails(Product source)
+    {
+        RussianName = source.RussianName;
+        EnglishName = source.EnglishName;
+        VendorCode = source.VendorCode;
+        Description = source.Description;
+        VatRate = source.VatRate;
+        Height = source.Height;
+        Width = source.Width;
+        Depth = source.Depth;
+        IsActive = source.IsActive;
+        ItemStatus = source.ItemStatus;
+        MaterialId = source.MaterialId;
+        CategoryId = source.CategoryId;
+    }
 }
