@@ -13,10 +13,10 @@ public class Contact : BaseModel
     public string? LastName { get; set; }
 
     [Required, EmailAddress, StringLength(250)]
-    public string EmailAddress { get; set; }
+    public string EmailAddress { get; set; }  = string.Empty;
 
     [Required, Phone, StringLength(20)]
-    public string PhoneNumber { get; set; }
+    public string PhoneNumber { get; set; }  = string.Empty;
 
     public User? Assignee { get; set; }
 

@@ -5,8 +5,8 @@ namespace WoodenWorkshop.Core.Models;
 
 public class Folder : BaseModel
 {
-    [StringLength(100)]
-    public string Name { get; set; }
+    [Required, StringLength(100)]
+    public string Name { get; set; } = string.Empty;
 
     public Guid? ParentFolderId { get; set; }
 

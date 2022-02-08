@@ -7,6 +7,6 @@ public class Permission : BaseModel
 {
     public Guid RoleId { get; set; }
 
-    [ConstantsRange(typeof(Permissions))]
-    public string Name { get; set; }
+    [ConstantsRange(typeof(Permissions))] 
+    public string Name { get; set; } = string.Empty;
 }
