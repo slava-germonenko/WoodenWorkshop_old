@@ -3,48 +3,26 @@ using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 
 using WoodenWorkshop.Common.Exceptions;
+using WoodenWorkshop.Common.Models;
 using WoodenWorkshop.Common.Models.Paging;
 
 namespace WoodenWorkshop.Common.Extensions;
 
 public static class QueryableExtensions
 {
-    public static IQueryable<T> Page<T>(this IQueryable<T> query, Page page)
-    {
-        return query.Skip(page.Size * page.Index).Take(page.Size);
-    }
-
-    public static PagedCollection<TSource> ToPagedCollection<TSource>(
-        this IQueryable<TSource> query,
-        Page page
+    public static async Task EnsureExistsAsync<TSource>(
+        this IQueryable<TSource> query, 
+        Expression<Func<TSource, bool>> predicate,
+        string message = "Ничего не найдено по данному запросу."
     )
     {
-        var items = query.Page(page).ToList();
-        var itemsCount = query.Count();
-        return new PagedCollection<TSource>(page, items, itemsCount);
+        var exists = await query.AnyAsync(predicate);
+        if (!exists)
+        {
+            throw new NotFoundException(message);
+        }
     }
     
-    public static async Task<PagedCollection<TSource>> ToPagedCollectionAsync<TSource>(
-        this IQueryable<TSource> query,
-        Page page
-    )
-    {
-        var items = await query.Page(page).ToListAsync();
-        var itemsCount = await query.CountAsync();
-        return new PagedCollection<TSource>(page, items, itemsCount);
-    }
-
-    public static IQueryable<TSource> WhereNotNull<TSource, TValue>(
-        this IQueryable<TSource> queryable,
-        Expression<Func<TSource, bool>> expression,
-        TValue? value
-    )
-    {
-        return value is null
-            ? queryable
-            : queryable.Where(expression);
-    }
-
     public static TSource FirstOrNotFoundException<TSource>(
         this IQueryable<TSource> query, 
         Expression<Func<TSource, bool>> predicate,
@@ -73,5 +51,41 @@ public static class QueryableExtensions
         }
 
         return result;
+    }
+
+    public static IOrderedQueryable<TSource> ApplyOrderClause<TSource>(
+        this IQueryable<TSource> query,
+        OrderByClause<TSource> orderByClause
+    )
+    {
+        return orderByClause.IsDesc
+            ? query.OrderByDescending(orderByClause.KeyPicker)
+            : query.OrderBy(orderByClause.KeyPicker);
+    }
+
+    public static IQueryable<TSource> Page<TSource>(this IQueryable<TSource> query, Page page)
+    {
+        return query.Skip(page.Size * page.Index).Take(page.Size);
+    }
+
+    public static async Task<PagedCollection<TSource>> ToPagedCollectionAsync<TSource>(
+        this IQueryable<TSource> query,
+        Page page
+    )
+    {
+        var items = await query.Page(page).ToListAsync();
+        var itemsCount = await query.CountAsync();
+        return new PagedCollection<TSource>(page, items, itemsCount);
+    }
+    
+    public static IQueryable<TSource> WhereNotNull<TSource, TValue>(
+        this IQueryable<TSource> queryable,
+        Expression<Func<TSource, bool>> expression,
+        TValue? value
+    )
+    {
+        return value is null
+            ? queryable
+            : queryable.Where(expression);
     }
 }
