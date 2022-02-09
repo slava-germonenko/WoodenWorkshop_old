@@ -23,6 +23,7 @@
       <ProjectReference Include="..\WoodenWorkshop.Auth\WoodenWorkshop.Auth.csproj" />
       <ProjectReference Include="..\WoodenWorkshop.Core.Assets\WoodenWorkshop.Core.Assets.csproj" />
       <ProjectReference Include="..\WoodenWorkshop.Core.Contacts\WoodenWorkshop.Core.Contacts.csproj" />
+      <ProjectReference Include="..\WoodenWorkshop.Core.Products.Categories\WoodenWorkshop.Core.Products.Categories.csproj" />
       <ProjectReference Include="..\WoodenWorkshop.Core.Roles\WoodenWorkshop.Core.Roles.csproj" />
       <ProjectReference Include="..\WoodenWorkshop.Core.Users\WoodenWorkshop.Core.Users.csproj" />
       <ProjectReference Include="..\WoodenWorkshop.Core\WoodenWorkshop.Core.csproj" />

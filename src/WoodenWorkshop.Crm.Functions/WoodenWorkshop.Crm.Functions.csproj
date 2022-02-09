@@ -32,7 +32,4 @@
     <ProjectReference Include="..\WoodenWorkshop.Auth\WoodenWorkshop.Auth.csproj" />
     <ProjectReference Include="..\WoodenWorkshop.Core.Assets\WoodenWorkshop.Core.Assets.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Options" />
-  </ItemGroup>
 </Project>
