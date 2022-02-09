@@ -61,6 +61,7 @@ public class CoreContext : DbContext
         }
         foreach (var entry in ChangeTracker.Entries<BaseModel>().Where(e => e.State == EntityState.Added))
         {
+            entry.Entity.Updated = null;
             entry.Entity.Created = commitDate;
         }
     }
