@@ -2,12 +2,12 @@ using WoodenWorkshop.Crm.Api.Services.Abstractions;
 
 namespace WoodenWorkshop.Crm.Api.Services;
 
-public class HasAllPermissionsResolutionStrategy : IPermissionsResolutionStrategy
+public class HasAllPermissionsResolver : IPermissionsResolver
 {
     public IReadOnlyCollection<string> RequiredPermissions { get; }
     
     
-    public HasAllPermissionsResolutionStrategy(IReadOnlyCollection<string> requiredPermissions)
+    public HasAllPermissionsResolver(IReadOnlyCollection<string> requiredPermissions)
     {
         RequiredPermissions = requiredPermissions;
     }

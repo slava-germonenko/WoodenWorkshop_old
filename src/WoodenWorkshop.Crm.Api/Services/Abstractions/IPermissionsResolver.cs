@@ -1,6 +1,6 @@
 namespace WoodenWorkshop.Crm.Api.Services.Abstractions;
 
-public interface IPermissionsResolutionStrategy
+public interface IPermissionsResolver
 {
     public IReadOnlyCollection<string> RequiredPermissions { get; }
     
