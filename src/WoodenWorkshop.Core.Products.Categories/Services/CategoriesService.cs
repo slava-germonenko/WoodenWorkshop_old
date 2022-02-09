@@ -59,14 +59,15 @@ public class CategoriesService : ICategoriesService
         }
         
         var reassignProductsSql = categoryToReassignItemsId is null
-            ? $"UPDATE [dbo].[Products] SET CategoryId = NULL WHERE CategoryId = {categoryToRemoveId}"
-            : $"UPDATE [dbo].[Products] SET CategoryId = {categoryToReassignItemsId.Value} WHERE CategoryId = {categoryToRemoveId}";
+            ? $"UPDATE [dbo].[Products] SET CategoryId = NULL WHERE CategoryId = @CategoryToRemove"
+            : $"UPDATE [dbo].[Products] SET CategoryId = '{categoryToReassignItemsId.Value}' WHERE CategoryId = @CategoryToRemove";
 
         await _context.Database.ExecuteSqlRawAsync(@$"
             BEGIN TRANSACTION [T1]
                 BEGIN TRY
+                    DECLARE @CategoryToRemove UNIQUEIDENTIFIER = '{categoryToRemoveId}'
                     {reassignProductsSql}
-                    DELETE FROM [dbo].[Categories] WHERE Id = {categoryToRemoveId}
+                    DELETE FROM [dbo].[Categories] WHERE Id = @CategoryToRemove
                     COMMIT TRANSACTION [T1]
                 END TRY
             BEGIN CATCH
