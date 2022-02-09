@@ -6,4 +6,9 @@ public class Material : BaseModel
 {
     [Required, StringLength(100)]
     public string Name { get; set; } = string.Empty;
+
+    public void CopyDetails(Material source)
+    {
+        Name = source.Name;
+    }
 }
