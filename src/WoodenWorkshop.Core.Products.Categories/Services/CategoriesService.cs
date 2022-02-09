@@ -50,11 +50,6 @@ public class CategoriesService : ICategoriesService
 
     public async Task RemoveCategoryAsync(Guid categoryToRemoveId, Guid? categoryToReassignItemsId)
     {
-        await _context.Categories.EnsureExistsAsync(
-            c => c.Id == categoryToRemoveId,
-            Errors.CategoryNotFound(categoryToRemoveId)
-        );
-
         if (categoryToReassignItemsId is not null)
         {
             await _context.Categories.EnsureExistsAsync(
@@ -62,7 +57,7 @@ public class CategoriesService : ICategoriesService
                 Errors.CategoryNotFound(categoryToReassignItemsId.Value)
             );
         }
-
+        
         var reassignProductsSql = categoryToReassignItemsId is null
             ? $"UPDATE [dbo].[Products] SET CategoryId = NULL WHERE CategoryId = {categoryToRemoveId}"
             : $"UPDATE [dbo].[Products] SET CategoryId = {categoryToReassignItemsId.Value} WHERE CategoryId = {categoryToRemoveId}";
@@ -76,6 +71,7 @@ public class CategoriesService : ICategoriesService
                 END TRY
             BEGIN CATCH
                 ROLLBACK TRANSACTION [T1]
+            END CATCH
         ");
     }
 }

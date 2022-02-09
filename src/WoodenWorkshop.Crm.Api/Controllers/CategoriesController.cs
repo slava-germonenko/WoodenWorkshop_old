@@ -33,7 +33,7 @@ public class CategoriesController : ControllerBase
     }
     
     [HttpPost(""), RequirePermissions(Permissions.Admin)]
-    public async Task<ActionResult<Category>> AddCategoryAsync(Category categoryToSave)
+    public async Task<ActionResult<Category>> AddCategoryAsync([FromBody] Category categoryToSave)
     {
         categoryToSave.Id = Guid.Empty;
         var savedCategoryCopy = await _categoriesService.SaveCategoryAsync(categoryToSave);
@@ -41,7 +41,7 @@ public class CategoriesController : ControllerBase
     }
 
     [HttpPut(""), RequirePermissions(Permissions.Admin)]
-    public async Task<ActionResult<Category>> SaveCategoryAsync(Category categoryToSave)
+    public async Task<ActionResult<Category>> SaveCategoryAsync([FromBody] Category categoryToSave)
     {
         var savedCategoryCopy = await _categoriesService.SaveCategoryAsync(categoryToSave);
         return Ok(savedCategoryCopy);
