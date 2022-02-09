@@ -40,8 +40,8 @@ public class RequirePermissionsAttribute : Attribute, IAuthorizationFilter
             return;
         }
 
-        var hasAllRequirePermissions = GetPermissionsResolutionStrategy(_permissionResolutionStrategyCode, permissions)
-            .PermissionsMeetRequirements(_requiredPermissions);
+        var hasAllRequirePermissions = GetPermissionsResolutionStrategy(_permissionResolutionStrategyCode, _requiredPermissions)
+            .PermissionsMeetRequirements(permissions);
 
         if (!hasAllRequirePermissions)
         {
@@ -49,15 +49,15 @@ public class RequirePermissionsAttribute : Attribute, IAuthorizationFilter
         }
     }
 
-    private IPermissionsResolutionStrategy GetPermissionsResolutionStrategy(
+    private IPermissionsResolver GetPermissionsResolutionStrategy(
         PermissionResolutionStrategies strategyCode,
         IReadOnlyCollection<string> requiredPermissions
     )
     {
         return strategyCode switch
         {
-            PermissionResolutionStrategies.HasAll => new HasAllPermissionsResolutionStrategy(requiredPermissions),
-            PermissionResolutionStrategies.HasAny => new HasAnyPermissionsResolutionStrategy(requiredPermissions),
+            PermissionResolutionStrategies.HasAll => new HasAllPermissionsResolver(requiredPermissions),
+            PermissionResolutionStrategies.HasAny => new HasAnyPermissionsResolver(requiredPermissions),
             _ => throw new ArgumentOutOfRangeException(nameof(strategyCode), strategyCode, "Невозможно проверить права доступа пользователя.")
         };
     }
