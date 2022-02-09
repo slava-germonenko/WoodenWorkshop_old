@@ -1,7 +1,10 @@
 using Microsoft.AspNetCore.Mvc.Filters;
+
 using WoodenWorkshop.Common.Exceptions;
 using WoodenWorkshop.Core.Models.Enums;
 using WoodenWorkshop.Crm.Api.Extensions;
+using WoodenWorkshop.Crm.Api.Services;
+using WoodenWorkshop.Crm.Api.Services.Abstractions;
 
 namespace WoodenWorkshop.Crm.Api.Filters;
 
@@ -10,18 +13,18 @@ public class RequirePermissionsAttribute : Attribute, IAuthorizationFilter
 {
     private readonly string[] _requiredPermissions;
 
-    private readonly PermissionResolutionStrategies _permissionResolutionStrategies;
+    private readonly PermissionResolutionStrategies _permissionResolutionStrategyCode;
 
-    public RequirePermissionsAttribute(PermissionResolutionStrategies resolutionStrategy, params string[] permissions)
+    public RequirePermissionsAttribute(PermissionResolutionStrategies resolutionStrategyCode, params string[] permissions)
     {
         _requiredPermissions = permissions;
-        _permissionResolutionStrategies = resolutionStrategy;
+        _permissionResolutionStrategyCode = resolutionStrategyCode;
     }
     
     public RequirePermissionsAttribute(params string[] permissions)
     {
         _requiredPermissions = permissions;
-        _permissionResolutionStrategies = PermissionResolutionStrategies.HasAny;
+        _permissionResolutionStrategyCode = PermissionResolutionStrategies.HasAny;
     }
     
     public void OnAuthorization(AuthorizationFilterContext context)
@@ -37,12 +40,8 @@ public class RequirePermissionsAttribute : Attribute, IAuthorizationFilter
             return;
         }
 
-        var hasAllRequirePermissions = _permissionResolutionStrategies switch
-        {
-            PermissionResolutionStrategies.HasAll => HasAllPermissions(permissions),
-            PermissionResolutionStrategies.HasAny => HasAnyPermission(permissions),
-            _ => false
-        };
+        var hasAllRequirePermissions = GetPermissionsResolutionStrategy(_permissionResolutionStrategyCode, permissions)
+            .PermissionsMeetRequirements(_requiredPermissions);
 
         if (!hasAllRequirePermissions)
         {
@@ -50,13 +49,16 @@ public class RequirePermissionsAttribute : Attribute, IAuthorizationFilter
         }
     }
 
-    private bool HasAllPermissions(IReadOnlyCollection<string> requiredPermissions) => requiredPermissions
-        .Intersect(_requiredPermissions)
-        .ToList()
-        .Count >= _requiredPermissions.Length;
-    
-    private bool HasAnyPermission(IReadOnlyCollection<string> requiredPermissions) => requiredPermissions
-        .Intersect(_requiredPermissions)
-        .ToList()
-        .Any();
+    private IPermissionsResolutionStrategy GetPermissionsResolutionStrategy(
+        PermissionResolutionStrategies strategyCode,
+        IReadOnlyCollection<string> requiredPermissions
+    )
+    {
+        return strategyCode switch
+        {
+            PermissionResolutionStrategies.HasAll => new HasAllPermissionsResolutionStrategy(requiredPermissions),
+            PermissionResolutionStrategies.HasAny => new HasAnyPermissionsResolutionStrategy(requiredPermissions),
+            _ => throw new ArgumentOutOfRangeException(nameof(strategyCode), strategyCode, "Невозможно проверить права доступа пользователя.")
+        };
+    }
 }
