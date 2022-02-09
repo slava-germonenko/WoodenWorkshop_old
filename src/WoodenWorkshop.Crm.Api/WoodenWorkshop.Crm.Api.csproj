@@ -26,7 +26,6 @@
       <ProjectReference Include="..\WoodenWorkshop.Core.Roles\WoodenWorkshop.Core.Roles.csproj" />
       <ProjectReference Include="..\WoodenWorkshop.Core.Users\WoodenWorkshop.Core.Users.csproj" />
       <ProjectReference Include="..\WoodenWorkshop.Core\WoodenWorkshop.Core.csproj" />
-      <ProjectReference Include="..\WoodenWorkshop.Infrastructure.Blobs\WoodenWorkshop.Infrastructure.Blobs.csproj" />
     </ItemGroup>
 
 </Project>
