@@ -22,6 +22,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WoodenWorkshop.Crm.Function
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WoodenWorkshop.Core.Products.Categories", "src\WoodenWorkshop.Core.Products.Categories\WoodenWorkshop.Core.Products.Categories.csproj", "{FFF09134-9B23-4582-884D-4C90611E7B52}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WoodenWorkshop.Core.PriceTypes", "src\WoodenWorkshop.Core.PriceTypes\WoodenWorkshop.Core.PriceTypes.csproj", "{754D2FE6-AB39-414A-B7DA-4D04F8601F5B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,6 +40,7 @@ Global
 		{920D1624-87C8-4D0C-B107-D32B9EDDA424} = {1DB02DCD-CE0B-434D-940B-C31425B55BD2}
 		{11FD7290-544F-4525-B2A6-53546FAD0FF8} = {1DB02DCD-CE0B-434D-940B-C31425B55BD2}
 		{FFF09134-9B23-4582-884D-4C90611E7B52} = {1DB02DCD-CE0B-434D-940B-C31425B55BD2}
+		{754D2FE6-AB39-414A-B7DA-4D04F8601F5B} = {1DB02DCD-CE0B-434D-940B-C31425B55BD2}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{0F5648EB-37A7-4737-A1E9-2A9359362DC1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -80,5 +83,9 @@ Global
 		{FFF09134-9B23-4582-884D-4C90611E7B52}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FFF09134-9B23-4582-884D-4C90611E7B52}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FFF09134-9B23-4582-884D-4C90611E7B52}.Release|Any CPU.Build.0 = Release|Any CPU
+		{754D2FE6-AB39-414A-B7DA-4D04F8601F5B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{754D2FE6-AB39-414A-B7DA-4D04F8601F5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{754D2FE6-AB39-414A-B7DA-4D04F8601F5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{754D2FE6-AB39-414A-B7DA-4D04F8601F5B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
