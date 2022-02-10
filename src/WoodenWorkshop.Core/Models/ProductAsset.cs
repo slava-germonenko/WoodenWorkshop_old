@@ -13,4 +13,10 @@ public class ProductAsset : BaseModel
     public Uri Url { get; set; }
 
     public bool IsExternal { get; set; }
+
+    public void CopyDetails(ProductAsset source)
+    {
+        Url = source.Url;
+        IsExternal = source.IsExternal;
+    }
 }
