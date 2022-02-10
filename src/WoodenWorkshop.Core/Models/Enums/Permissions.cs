@@ -15,4 +15,6 @@ public class Permissions
     public const string ViewOrders = "orders.view";
     public const string Products = "products";
     public const string ViewProducts = "products.view";
+    public const string ManageProducts = "products.manage";
+    public const string RemoveProducts = "products.remove";
 }

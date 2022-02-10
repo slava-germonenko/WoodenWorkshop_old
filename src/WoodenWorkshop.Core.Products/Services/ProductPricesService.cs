@@ -1,10 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 
 using WoodenWorkshop.Core.Models;
+using WoodenWorkshop.Core.Products.Services.Abstractions;
 
 namespace WoodenWorkshop.Core.Products.Services;
 
-public class ProductPricesService
+public class ProductPricesService : IProductPricesService
 {
     private readonly CoreContext _context;
 
