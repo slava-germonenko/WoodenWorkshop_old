@@ -48,6 +48,7 @@ public class CoreContext : DbContext
         modelBuilder.ApplyConfiguration(new AssetEntityConfiguration());
         modelBuilder.ApplyConfiguration(new ProductAssetConfiguration());
         modelBuilder.ApplyConfiguration(new ProductPriceConfiguration());
+        modelBuilder.ApplyConfiguration(new ProductSocialLinkConfiguration());
         modelBuilder.ApplyConfiguration(new UserRoleEntityConfiguration());
     }
 

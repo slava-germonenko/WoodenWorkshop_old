@@ -52,7 +52,7 @@ public class CategoriesService : ICategoriesService
     {
         if (categoryToReassignItemsId is not null)
         {
-            await _context.Categories.EnsureExistsAsync(
+            await _context.Categories.AnyOrNotFoundExceptionAsync(
                 c => c.Id == categoryToReassignItemsId, 
                 Errors.CategoryNotFound(categoryToReassignItemsId.Value)
             );

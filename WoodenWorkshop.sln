@@ -24,9 +24,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WoodenWorkshop.Core.Product
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WoodenWorkshop.Core.PriceTypes", "src\WoodenWorkshop.Core.PriceTypes\WoodenWorkshop.Core.PriceTypes.csproj", "{754D2FE6-AB39-414A-B7DA-4D04F8601F5B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WoodenWorkshop.Core.Products", "src\WoodenWorkshop.Core.Products\WoodenWorkshop.Core.Products.csproj", "{71EEF0E6-9452-445D-AB65-216EF3D24EF2}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WoodenWorkshop.Core.Materials", "src\WoodenWorkshop.Core.Materials\WoodenWorkshop.Core.Materials.csproj", "{9E265321-B65C-461F-912A-2257D307F06B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WoodenWorkshop.Core.Products", "src\WoodenWorkshop.Core.Products\WoodenWorkshop.Core.Products.csproj", "{3C7EB7A2-9D62-4FE7-A633-B29B3A71DFE8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,8 +45,8 @@ Global
 		{11FD7290-544F-4525-B2A6-53546FAD0FF8} = {1DB02DCD-CE0B-434D-940B-C31425B55BD2}
 		{FFF09134-9B23-4582-884D-4C90611E7B52} = {1DB02DCD-CE0B-434D-940B-C31425B55BD2}
 		{754D2FE6-AB39-414A-B7DA-4D04F8601F5B} = {1DB02DCD-CE0B-434D-940B-C31425B55BD2}
-		{71EEF0E6-9452-445D-AB65-216EF3D24EF2} = {1DB02DCD-CE0B-434D-940B-C31425B55BD2}
 		{9E265321-B65C-461F-912A-2257D307F06B} = {1DB02DCD-CE0B-434D-940B-C31425B55BD2}
+		{3C7EB7A2-9D62-4FE7-A633-B29B3A71DFE8} = {1DB02DCD-CE0B-434D-940B-C31425B55BD2}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{0F5648EB-37A7-4737-A1E9-2A9359362DC1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -93,13 +93,13 @@ Global
 		{754D2FE6-AB39-414A-B7DA-4D04F8601F5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{754D2FE6-AB39-414A-B7DA-4D04F8601F5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{754D2FE6-AB39-414A-B7DA-4D04F8601F5B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{71EEF0E6-9452-445D-AB65-216EF3D24EF2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{71EEF0E6-9452-445D-AB65-216EF3D24EF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{71EEF0E6-9452-445D-AB65-216EF3D24EF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{71EEF0E6-9452-445D-AB65-216EF3D24EF2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9E265321-B65C-461F-912A-2257D307F06B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9E265321-B65C-461F-912A-2257D307F06B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9E265321-B65C-461F-912A-2257D307F06B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9E265321-B65C-461F-912A-2257D307F06B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C7EB7A2-9D62-4FE7-A633-B29B3A71DFE8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C7EB7A2-9D62-4FE7-A633-B29B3A71DFE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C7EB7A2-9D62-4FE7-A633-B29B3A71DFE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C7EB7A2-9D62-4FE7-A633-B29B3A71DFE8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

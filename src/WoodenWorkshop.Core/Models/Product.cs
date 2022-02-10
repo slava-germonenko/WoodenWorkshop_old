@@ -65,4 +65,10 @@ public class Product : BaseModel
         MaterialId = source.MaterialId;
         CategoryId = source.CategoryId;
     }
+
+    public void MarkAsDeleted()
+    {
+        IsActive = true;
+        IsDeleted = true;
+    }
 }

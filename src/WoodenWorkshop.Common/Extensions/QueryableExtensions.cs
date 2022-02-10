@@ -10,7 +10,7 @@ namespace WoodenWorkshop.Common.Extensions;
 
 public static class QueryableExtensions
 {
-    public static async Task EnsureExistsAsync<TSource>(
+    public static async Task AnyOrNotFoundExceptionAsync<TSource>(
         this IQueryable<TSource> query, 
         Expression<Func<TSource, bool>> predicate,
         string message = "Ничего не найдено по данному запросу."
@@ -20,6 +20,19 @@ public static class QueryableExtensions
         if (!exists)
         {
             throw new NotFoundException(message);
+        }
+    }
+    
+    public static async Task NoneOrDuplicateExceptionAsync<TSource>(
+        this IQueryable<TSource> query, 
+        Expression<Func<TSource, bool>> predicate,
+        string message = "Запись уже существует."
+    )
+    {
+        var exists = await query.AnyAsync(predicate);
+        if (exists)
+        {
+            throw new DuplicateException(message);
         }
     }
     

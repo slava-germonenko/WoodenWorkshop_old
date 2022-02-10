@@ -26,6 +26,7 @@
       <ProjectReference Include="..\WoodenWorkshop.Core.Materials\WoodenWorkshop.Core.Materials.csproj" />
       <ProjectReference Include="..\WoodenWorkshop.Core.PriceTypes\WoodenWorkshop.Core.PriceTypes.csproj" />
       <ProjectReference Include="..\WoodenWorkshop.Core.Products.Categories\WoodenWorkshop.Core.Products.Categories.csproj" />
+      <ProjectReference Include="..\WoodenWorkshop.Core.Products\WoodenWorkshop.Core.Products.csproj" />
       <ProjectReference Include="..\WoodenWorkshop.Core.Roles\WoodenWorkshop.Core.Roles.csproj" />
       <ProjectReference Include="..\WoodenWorkshop.Core.Users\WoodenWorkshop.Core.Users.csproj" />
       <ProjectReference Include="..\WoodenWorkshop.Core\WoodenWorkshop.Core.csproj" />
