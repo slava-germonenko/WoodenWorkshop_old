@@ -63,7 +63,8 @@ public class ProductsService : IProductsService
         );
 
         await _context.Products.NoneOrDuplicateExceptionAsync(
-            product => product.Id == sourceProduct.Id && product.IsDeleted
+            product => product.Id == sourceProduct.Id && product.IsDeleted,
+            Errors.ProductDeleted(sourceProduct.Id)
         );
 
         var productToSave = await _context.Products.FirstOrDefaultAsync(product => product.Id == sourceProduct.Id)
@@ -73,12 +74,15 @@ public class ProductsService : IProductsService
         _context.Update(productToSave);
         await _context.SaveChangesAsync();
 
-        return productToSave;
+        return await GetProductAsync(productToSave.Id);
     }
 
     public async Task SoftDeleteProductAsync(Guid productId)
     {
-        var productToRemove = await _context.Products.FindOrNotFoundExceptionAsync(productId);
+        var productToRemove = await _context.Products.FindOrNotFoundExceptionAsync(
+            productId,
+            Errors.ProductNotFound(productId)
+        );
         productToRemove.MarkAsDeleted();
 
         _context.Update(productToRemove);

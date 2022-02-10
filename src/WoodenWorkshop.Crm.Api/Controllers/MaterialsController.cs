@@ -23,7 +23,10 @@ public class MaterialsController : ControllerBase
 
 
     [HttpGet("")]
-    public async Task<ActionResult<PagedCollection<Material>>> GetMaterialsPageAsync(Page page, BaseFilter filter)
+    public async Task<ActionResult<PagedCollection<Material>>> GetMaterialsPageAsync(
+        [FromQuery] Page page,
+        [FromQuery] BaseFilter filter
+    )
     {
         var materialsPage = await _materialsService.GetMaterialsAsync(page, filter);
         return Ok(materialsPage);

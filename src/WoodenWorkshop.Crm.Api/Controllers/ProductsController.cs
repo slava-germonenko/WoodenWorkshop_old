@@ -44,7 +44,7 @@ public class ProductsController : ControllerBase
         return Ok(productsPage);
     }
 
-    [HttpPatch(""), RequirePermissions(Permissions.Products, Permissions.ManageProducts)]
+    [HttpPost(""), RequirePermissions(Permissions.Products, Permissions.ManageProducts)]
     public async Task<ActionResult<Product>> CreateProductAsync(Product product)
     {
         product.Id = Guid.Empty;

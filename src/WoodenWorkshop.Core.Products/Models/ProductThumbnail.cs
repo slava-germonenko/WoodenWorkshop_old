@@ -5,6 +5,8 @@ namespace WoodenWorkshop.Core.Products.Models;
 
 public record ProductThumbnail
 {
+    public Guid Id { get; set; }
+    
     public string RussianName { get; set; } = string.Empty;
 
     public string EnglishName { get; set; } = string.Empty;

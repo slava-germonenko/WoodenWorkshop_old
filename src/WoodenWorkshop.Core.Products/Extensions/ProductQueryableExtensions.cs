@@ -47,6 +47,7 @@ public static class ProductQueryableExtensions
     {
         return productsQuery.Select(product => new ProductThumbnail
         {
+            Id = product.Id,
             RussianName = product.RussianName,
             EnglishName = product.EnglishName,
             VendorCode = product.VendorCode,

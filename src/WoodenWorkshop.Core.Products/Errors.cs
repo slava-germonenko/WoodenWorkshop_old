@@ -8,9 +8,9 @@ public static class Errors
 
     public static string ProductNotFound(Guid productId) => $"Товар с идентификатором '{productId}' не найден.";
 
-    public static string ProductDeleted(Guid prodcutId) => $"Товар с идентификатором '{prodcutId}' был удалён";
+    public static string ProductDeleted(Guid prodcutId) => $"Товар с идентификатором '{prodcutId}' был удалён.";
 
-    public static string ProductVendorCodeUnavailable(string vendorCode) => $"Невозможно использовать артикул товара {vendorCode} так как он уже был использован.";
+    public static string ProductVendorCodeUnavailable(string vendorCode) => $"Невозможно использовать артикул товара '{vendorCode}' так как он уже был использован.";
         
     public static string RedundantProductAssets(Guid productId, IEnumerable<Guid> redundantAssetIds) 
         => $"Не все указанные ассеты принадлежат продукут {productId}. " + 
