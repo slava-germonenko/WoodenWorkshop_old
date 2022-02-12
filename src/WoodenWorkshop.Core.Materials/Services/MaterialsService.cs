@@ -55,13 +55,15 @@ public class MaterialsService : IMaterialsService
         await _context.Database.ExecuteSqlRawAsync(@$"
             BEGIN TRANSACTION
             BEGIN TRY
-                UPDATE [dbo].[Products] SET MaterialId = NULL WHERE MaterialId = '@MaterialToRemoveId'
-                DELETE FROM [dbo].[Materials] WHERE Id = '@MaterialToRemoveId'
+                DECLARE @MaterialToRemoveId UNIQUEIDENTIFIER = '{materialToRemoveId}'
+                UPDATE [dbo].[Products] SET MaterialId = NULL WHERE MaterialId = @MaterialToRemoveId
+                DELETE FROM [dbo].[Materials] WHERE Id = @MaterialToRemoveId
                 COMMIT TRANSACTION
             END TRY
             BEGIN CATCH
                 ROLLBACK TRANSACTION
+                THROW
             END CATCH
-        ", materialToRemoveId);
+        ");
     }
 }

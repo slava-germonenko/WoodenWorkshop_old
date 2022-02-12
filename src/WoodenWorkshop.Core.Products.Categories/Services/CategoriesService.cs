@@ -63,15 +63,16 @@ public class CategoriesService : ICategoriesService
             : $"UPDATE [dbo].[Products] SET CategoryId = '{categoryToReassignItemsId.Value}' WHERE CategoryId = @CategoryToRemove";
 
         await _context.Database.ExecuteSqlRawAsync(@$"
-            BEGIN TRANSACTION [T1]
+            BEGIN TRANSACTION
                 BEGIN TRY
                     DECLARE @CategoryToRemove UNIQUEIDENTIFIER = '{categoryToRemoveId}'
                     {reassignProductsSql}
                     DELETE FROM [dbo].[Categories] WHERE Id = @CategoryToRemove
-                    COMMIT TRANSACTION [T1]
+                    COMMIT TRANSACTION
                 END TRY
             BEGIN CATCH
-                ROLLBACK TRANSACTION [T1]
+                ROLLBACK TRANSACTION
+                THROW
             END CATCH
         ");
     }

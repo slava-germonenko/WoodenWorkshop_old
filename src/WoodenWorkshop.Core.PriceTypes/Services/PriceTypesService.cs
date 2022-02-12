@@ -51,16 +51,18 @@ public class PriceTypesService : IPriceTypesService
 
     public async Task RemovePriceTypeAsync(Guid priceTypeId)
     {
-        await _context.Database.ExecuteSqlRawAsync(@"
+        await _context.Database.ExecuteSqlRawAsync(@$"
             BEGIN TRANSACTION
             BEGIN TRY
-                DELETE FROM [dbo].[ProductPrices] WHERE PriceTypeId = '@PriceTypeId'
-                DELETE FROM [dbo].[PriceTypes] WHERE Id = '@PriceTypeId'
+                DECLARE @PriceTypeId UNIQUEIDENTIFIER = {priceTypeId}
+                DELETE FROM [dbo].[ProductPrices] WHERE PriceTypeId = @PriceTypeId
+                DELETE FROM [dbo].[PriceTypes] WHERE Id = @PriceTypeId
                 COMMIT TRANSACTION
             END TRY
             BEGIN CATCH
                 ROLLBACK TRANSACTION
+                THROW
             END CATCH
-        ", priceTypeId);
+        ");
     }
 }
